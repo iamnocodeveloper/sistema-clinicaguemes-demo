@@ -930,12 +930,13 @@ for(let off = -20; off <= 12; off++){
   const base = off < 0 ? 3.4 : (off <= 6 ? 4.2 : 2.2);
   let n = Math.floor(base + rnd()*2.2);
   if(d.getDay() === 6) n = Math.max(1, n - 2);
+  const slots = d.getDay() === 6 ? SLOTS.filter(t => t < '13:00') : SLOTS;
   const used = {};
   for(let k = 0; k < n; k++){
     const s = pick(SERVICES);
     const pros = prosOf(s.spec);
     const pro = (s.spec !== 'imagenes' && s.spec !== 'lab' && rnd() < 0.55) ? s.pro : pick(pros).id;
-    const time = pick(SLOTS);
+    const time = pick(slots);
     const key = pro + time;
     if(used[key]) continue;
     used[key] = true;
