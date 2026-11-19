@@ -1,0 +1,2328 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clínica Güemes · Sistema de gestión</title>
+<meta name="description" content="Demo del sistema de gestión de Clínica Güemes, San Juan: agenda por especialidad, pacientes, estudios, mensajes, pagos e informes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0E2A3C;
+  --ink-2:#16415A;
+  --blue:#1C6E93;
+  --blue-2:#155A79;
+  --teal:#0E8C8B;
+  --teal-soft:#E3F4F4;
+  --accent:#1C86AB;
+  --accent-2:#156C8C;
+  --accent-soft:#E4F1F7;
+  --accent-softer:#F1F8FB;
+  --bg:#F3F7FA;
+  --card:#FFFFFF;
+  --line:#DDE8EF;
+  --line-2:#ECF3F7;
+  --text:#122C3A;
+  --muted:#5F7684;
+  --muted-2:#869AA6;
+  --green:#1F7A5C;
+  --green-soft:#E2F4EC;
+  --amber:#94631A;
+  --amber-soft:#FBF1DC;
+  --red:#A33F49;
+  --red-soft:#FAE9EA;
+  --violet:#6A5C9E;
+  --violet-soft:#EEECF8;
+  --radius:14px;
+  --shadow:0 1px 2px rgba(14,42,60,.05), 0 8px 24px rgba(14,42,60,.06);
+  --sidebar-w:252px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background:var(--bg); color:var(--text); font-size:14.5px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{margin:0; font-weight:700; letter-spacing:-.015em}
+p{margin:0}
+a{color:inherit; text-decoration:none}
+button{font-family:inherit; cursor:pointer; border:0; background:none; color:inherit; font-size:inherit}
+input,select,textarea{font-family:inherit; font-size:inherit; color:inherit}
+.hidden{display:none !important}
+.ico{width:18px; height:18px; flex:0 0 18px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
+.ico-sm{width:15px;height:15px;flex:0 0 15px}
+.ico-lg{width:22px;height:22px;flex:0 0 22px}
+
+/* ---------- Login ---------- */
+.login{min-height:100vh; display:grid; grid-template-columns:1.05fr .95fr; background:var(--ink)}
+.login-art{
+  position:relative; overflow:hidden; padding:52px 56px;
+  background:
+    radial-gradient(110% 80% at 0% 0%, #17587A 0%, rgba(23,88,122,0) 62%),
+    radial-gradient(80% 70% at 100% 100%, #0E8C8B 0%, rgba(14,140,139,0) 55%),
+    linear-gradient(160deg,#0C2636 0%, #123B52 55%, #17516E 100%);
+  color:#F2FAFD; display:flex; flex-direction:column; justify-content:space-between;
+}
+.login-art::after{
+  content:""; position:absolute; inset:-20% -10% auto auto; width:430px; height:430px;
+  border-radius:50%; border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 0 0 60px rgba(255,255,255,.04), 0 0 0 130px rgba(255,255,255,.025);
+}
+.brand{display:flex; align-items:center; gap:12px; position:relative; z-index:1}
+.brand-mark{
+  width:42px;height:42px;border-radius:12px; display:grid;place-items:center;
+  background:linear-gradient(150deg,#8FD3DA,#2E9BB5); color:#08303F;
+}
+.brand-name{font-size:16.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase}
+.brand-sub{font-size:11px; opacity:.7; letter-spacing:.05em}
+.login-copy{position:relative; z-index:1; max-width:440px}
+.login-copy .eyebrow{font-size:11.5px; letter-spacing:.18em; text-transform:uppercase; color:#8FD3DA; font-weight:700}
+.login-copy h1{font-size:36px; line-height:1.16; margin:14px 0 16px; font-weight:800}
+.login-copy p{color:#CFE6EE; font-size:14.5px; line-height:1.65}
+.login-list{list-style:none; margin:26px 0 0; padding:0; display:grid; gap:11px}
+.login-list li{display:flex; gap:10px; align-items:flex-start; font-size:13.5px; color:#E1F0F5}
+.login-list .ico{color:#8FD3DA; margin-top:1px}
+.login-foot{position:relative; z-index:1; font-size:11.5px; color:#A9CAD6}
+.login-panel{display:flex; align-items:center; justify-content:center; background:#FAFCFD; padding:32px 24px}
+.login-card{width:100%; max-width:392px}
+.login-card .mobile-brand{display:none}
+.login-card h2{font-size:24px; margin:0 0 6px}
+.login-card .lead{color:var(--muted); font-size:13.5px; margin-bottom:24px}
+.field{margin-bottom:14px}
+.field label{display:block; font-size:12px; font-weight:600; color:var(--muted); margin-bottom:6px; letter-spacing:.01em}
+.input, .select, textarea.input{
+  width:100%; padding:11px 13px; border:1px solid var(--line); border-radius:10px;
+  background:#fff; transition:border-color .15s, box-shadow .15s; font-size:14px;
+}
+.input:focus,.select:focus,textarea.input:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+.input[readonly]{background:#F6FAFC; color:var(--muted)}
+.select{appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235F7684' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:34px}
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:10px 16px; border-radius:10px; font-size:13.5px; font-weight:700;
+  border:1px solid transparent; transition:all .15s; white-space:nowrap;
+}
+.btn-primary{background:var(--blue-2); color:#fff}
+.btn-primary:hover{background:#0F4A64}
+.btn-accent{background:var(--teal); color:#fff}
+.btn-accent:hover{background:#0B7675}
+.btn-ghost{background:#fff; border-color:var(--line); color:var(--text)}
+.btn-ghost:hover{background:#F4FAFC; border-color:#C9DCE6}
+.btn-soft{background:var(--accent-soft); color:#145D79}
+.btn-soft:hover{background:#D5EAF3}
+.btn-block{width:100%; padding:12px}
+.btn-sm{padding:7px 11px; font-size:12.5px; border-radius:8px}
+.link-btn{color:var(--accent-2); font-weight:600; font-size:13px}
+.link-btn:hover{text-decoration:underline}
+.login-hint{
+  margin-top:18px; padding:12px 14px; border-radius:10px; background:var(--accent-softer);
+  border:1px dashed #BCD9E5; font-size:12.5px; color:#145D79; display:flex; gap:9px; align-items:flex-start;
+}
+.login-note{margin-top:22px; font-size:11.5px; color:var(--muted-2); text-align:center; line-height:1.6}
+
+/* ---------- App shell ---------- */
+.app{display:flex; min-height:100vh}
+.sidebar{
+  width:var(--sidebar-w); flex:0 0 var(--sidebar-w); background:linear-gradient(180deg,#0C2837 0%, #113A50 60%, #14465F 100%);
+  color:#D6E8F0; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; z-index:60;
+  transition:transform .22s ease;
+}
+.side-head{padding:22px 20px 18px; display:flex; align-items:center; gap:11px; border-bottom:1px solid rgba(255,255,255,.07)}
+.side-head .brand-mark{width:38px;height:38px;font-size:16px;border-radius:10px}
+.side-head .brand-name{font-size:12.5px}
+.side-head .brand-sub{font-size:10px; color:#93B8C8}
+.side-close{display:none; margin-left:auto; color:#A9CAD6; padding:4px}
+.side-nav{padding:14px 12px; overflow-y:auto; flex:1}
+.side-label{font-size:10px; text-transform:uppercase; letter-spacing:.16em; color:#7FA3B3; padding:10px 10px 6px; font-weight:700}
+.nav-item{
+  display:flex; align-items:center; gap:11px; padding:9.5px 11px; border-radius:9px;
+  color:#C6DDE7; font-size:13.5px; font-weight:500; margin-bottom:2px; width:100%; text-align:left;
+  transition:background .15s,color .15s;
+}
+.nav-item:hover{background:rgba(255,255,255,.06); color:#fff}
+.nav-item.active{background:rgba(143,211,218,.16); color:#fff; font-weight:700; box-shadow:inset 2px 0 0 #8FD3DA}
+.nav-item .ico{opacity:.85}
+.nav-item.active .ico{opacity:1}
+.nav-badge{margin-left:auto; background:#8FD3DA; color:#0C2837; font-size:10.5px; font-weight:800; padding:1px 6px; border-radius:20px}
+.side-foot{padding:14px 16px 18px; border-top:1px solid rgba(255,255,255,.07); font-size:11px; color:#93B8C8; line-height:1.55}
+.side-foot strong{color:#DFEFF5; display:block; font-size:12px; font-weight:700}
+
+.main{flex:1; min-width:0; display:flex; flex-direction:column}
+.topbar{
+  position:sticky; top:0; z-index:40; background:rgba(255,255,255,.92); backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line); padding:12px 26px; display:flex; align-items:center; gap:14px; min-height:64px;
+}
+.topbar .hamburger{display:none; padding:7px; border-radius:8px; border:1px solid var(--line); background:#fff}
+.topbar-title{display:flex; flex-direction:column; min-width:0}
+.topbar-title .t{font-size:15px; font-weight:800}
+.topbar-title .d{font-size:11.5px; color:var(--muted)}
+.topbar-spacer{flex:1}
+.topbar-actions{display:flex; align-items:center; gap:10px}
+.chip-date{
+  display:inline-flex; align-items:center; gap:7px; background:var(--accent-softer); color:#145D79;
+  padding:6px 11px; border-radius:20px; font-size:12px; font-weight:600; border:1px solid #DCECF3;
+}
+.user-btn{display:flex; align-items:center; gap:9px; padding:5px 8px 5px 5px; border-radius:30px; border:1px solid var(--line); background:#fff}
+.user-btn:hover{background:#F4FAFC}
+.avatar{width:30px;height:30px;border-radius:50%; display:grid; place-items:center; font-size:11.5px; font-weight:800; color:#145D79; background:var(--accent-soft); flex:0 0 30px}
+.avatar.lg{width:54px;height:54px;font-size:17px; flex:0 0 54px}
+.user-btn .un{font-size:12.5px; font-weight:600; line-height:1.2; display:block}
+.user-btn .ur{font-size:10.5px; color:var(--muted); display:block}
+.user-menu{
+  position:absolute; right:26px; top:60px; width:250px; background:#fff; border:1px solid var(--line);
+  border-radius:12px; box-shadow:0 12px 40px rgba(14,42,60,.16); padding:6px; z-index:70;
+}
+.user-menu a, .user-menu button{display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:9px 10px; border-radius:8px; font-size:13px; color:var(--text)}
+.user-menu a:hover, .user-menu button:hover{background:#F4FAFC}
+.user-menu .um-head{padding:10px 10px 9px; border-bottom:1px solid var(--line-2); margin-bottom:5px}
+.user-menu .um-head strong{display:block; font-size:13px}
+.user-menu .um-head span{font-size:11.5px; color:var(--muted)}
+.user-menu hr{border:0; border-top:1px solid var(--line-2); margin:5px 0}
+
+.view{padding:26px; flex:1; max-width:1520px; width:100%; min-width:0}
+.page-head{display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:20px}
+.page-head h1{font-size:22px}
+.page-head .sub{color:var(--muted); font-size:13px; margin-top:3px}
+.page-head .actions{margin-left:auto; display:flex; gap:8px; flex-wrap:wrap}
+
+/* ---------- Cards / KPI ---------- */
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow)}
+.card-pad{padding:18px 20px}
+.card-head{display:flex; align-items:center; gap:10px; padding:16px 20px; border-bottom:1px solid var(--line-2)}
+.card-head h3{font-size:14px}
+.card-head .hint{font-size:11.5px; color:var(--muted)}
+.card-head .actions{margin-left:auto; display:flex; gap:8px; align-items:center}
+.grid{display:grid; gap:16px}
+.stack{display:grid; gap:16px; min-width:0; grid-template-columns:minmax(0,1fr)}
+.kpis{grid-template-columns:repeat(4,minmax(0,1fr)); margin-bottom:16px}
+.stats-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.kpi{padding:17px 18px; position:relative; overflow:hidden}
+.kpi .k-top{display:flex; align-items:center; gap:9px; margin-bottom:9px}
+.kpi .k-ico{width:32px;height:32px;border-radius:9px; display:grid; place-items:center; background:var(--accent-softer); color:var(--accent-2)}
+.kpi .k-lbl{font-size:12px; color:var(--muted); font-weight:600}
+.kpi .k-val{font-size:25px; font-weight:800; letter-spacing:-.03em; line-height:1.1}
+.kpi .k-sub{font-size:11.5px; color:var(--muted); margin-top:4px; display:flex; align-items:center; gap:5px}
+.kpi .k-sub.up{color:var(--green)}
+.trend{display:inline-flex; align-items:center; gap:3px; font-weight:700}
+.dcols{display:grid; grid-template-columns:minmax(0,1.55fr) minmax(0,1fr); gap:16px}
+.dcols-3{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-top:16px}
+.dcols-3 > *, .dcols > *{min-width:0}
+
+/* ---------- Rows ---------- */
+.row{
+  display:flex; align-items:center; gap:12px; padding:12px 20px; border-top:1px solid var(--line-2);
+  width:100%; text-align:left; transition:background .12s;
+}
+.row:first-child{border-top:0}
+button.row:hover{background:#F7FBFD}
+.row .r-main{min-width:0; flex:1}
+.row .r-t{font-size:13.5px; font-weight:600; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.row .r-s{font-size:11.5px; color:var(--muted); display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.row .r-end{margin-left:auto; text-align:right; display:flex; align-items:center; gap:10px; flex:0 0 auto}
+.time-box{width:54px; flex:0 0 54px; text-align:center; border-right:1px solid var(--line-2); padding-right:10px}
+.time-box .h{font-size:13.5px; font-weight:800; letter-spacing:-.02em; display:block}
+.time-box .ampm{font-size:9.5px; color:var(--muted-2); font-weight:700}
+.pill{display:inline-flex; align-items:center; gap:5px; padding:2.5px 9px; border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap}
+.pill::before{content:""; width:5px;height:5px;border-radius:50%; background:currentColor; opacity:.9}
+.pill.no-dot::before{display:none}
+.pill-green{background:var(--green-soft); color:var(--green)}
+.pill-amber{background:var(--amber-soft); color:var(--amber)}
+.pill-red{background:var(--red-soft); color:var(--red)}
+.pill-blue{background:var(--accent-soft); color:var(--accent-2)}
+.pill-teal{background:var(--teal-soft); color:#0B7372}
+.pill-violet{background:var(--violet-soft); color:var(--violet)}
+.pill-gray{background:#EEF3F6; color:#5C7280}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:7px;background:#F4F9FB;color:#5C7280;font-size:11px;font-weight:600;border:1px solid var(--line-2)}
+
+/* ---------- Agenda filters / calendar ---------- */
+.agenda-bar{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:14px}
+.seg{display:inline-flex; background:#E8F0F4; padding:3px; border-radius:10px; gap:2px}
+.seg button{padding:6px 14px; border-radius:8px; font-size:12.5px; font-weight:700; color:var(--muted)}
+.seg button.on{background:#fff; color:var(--blue-2); box-shadow:0 1px 3px rgba(14,42,60,.12)}
+.date-nav{display:inline-flex; align-items:center; gap:4px; background:#fff; border:1px solid var(--line); border-radius:10px; padding:3px}
+.date-nav button{padding:5px 9px; border-radius:7px; color:var(--muted)}
+.date-nav button:hover{background:#F4FAFC; color:var(--text)}
+.date-nav .cur{padding:4px 10px; font-size:12.5px; font-weight:700; min-width:158px; text-align:center}
+.filter-select{padding:7px 30px 7px 10px; border:1px solid var(--line); border-radius:9px; font-size:12.5px; font-weight:600; background:#fff; max-width:230px}
+.cal-wrap{background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden}
+.cal-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch}
+.cal{min-width:700px}
+.cal-head{display:flex; background:#FAFCFD; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:2}
+.cal-corner{width:62px; flex:0 0 62px; border-right:1px solid var(--line-2); display:flex; align-items:flex-end; justify-content:center; padding-bottom:8px; font-size:10px; color:var(--muted-2); font-weight:700; text-transform:uppercase; letter-spacing:.08em}
+.cal-lane-h{flex:1 1 0; min-width:156px; padding:8px 10px; border-left:1px solid var(--line-2); display:flex; flex-direction:column; gap:2px}
+.cal-lane-h b{font-size:11.5px; display:flex; align-items:center; gap:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.cal-lane-h span{font-size:10px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.cal-body{display:flex; position:relative}
+.cal-times{width:62px; flex:0 0 62px; position:relative; border-right:1px solid var(--line-2); background:#FDFEFF}
+.cal-times span{position:absolute; right:8px; transform:translateY(-50%); font-size:10px; color:var(--muted-2); font-weight:600}
+.cal-lane{flex:1 1 0; min-width:156px; position:relative; border-left:1px solid var(--line-2); background-image:repeating-linear-gradient(to bottom, #ECF3F7 0 1px, transparent 1px 52px)}
+.cal-lane.weekend{background-color:#FCFDFE}
+.cal-block{
+  position:absolute; left:4px; right:4px; border-radius:7px; padding:2px 5px; text-align:left;
+  font-size:10.5px; line-height:1.15; overflow:hidden; border-left:3px solid #2E9E6B;
+  background:#E9F7F0;
+}
+.cal-block.compact{padding:1px 5px}
+.cal-block.compact .cb-s{display:none}
+.cal-block.compact .cb-h{font-size:9px; line-height:1.1}
+.cal-block.compact .cb-n{font-size:9.5px; line-height:1.1}
+.cal-block:hover{filter:brightness(.97); box-shadow:0 2px 8px rgba(14,42,60,.12)}
+.cal-block .cb-h{font-weight:800; font-size:9.5px; color:#1F7A5C; display:block; line-height:1.1}
+.cal-block .cb-n{font-weight:700; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.cal-block .cb-s{color:var(--muted); font-size:9.5px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.cal-block.st-pendiente{background:#FCF3E1; border-left-color:#D2A04A}
+.cal-block.st-pendiente .cb-h{color:#825414}
+.cal-block.st-atendido{background:#EAF2EE; border-left-color:#7FA695}
+.cal-block.st-atendido .cb-h{color:#4C7061}
+.cal-block.st-cancelado{background:#FAECED; border-left-color:#C48D93; opacity:.85}
+.cal-block.st-cancelado .cb-n{text-decoration:line-through}
+.cal-block.st-ausente{background:#F2EEF7; border-left-color:#A294C4}
+.cal-block.st-ausente .cb-n{text-decoration:line-through; text-decoration-color:#A294C4}
+.cal-now{position:absolute; left:62px; right:0; height:2px; background:#C2453F; z-index:3; pointer-events:none}
+.cal-now::before{content:""; position:absolute; left:-4px; top:-3px; width:8px; height:8px; border-radius:50%; background:#C2453F}
+.legend{display:flex; gap:14px; flex-wrap:wrap; font-size:11.5px; color:var(--muted); margin-top:12px}
+.legend span{display:inline-flex; align-items:center; gap:6px}
+.dot{width:8px;height:8px;border-radius:50%; display:inline-block; flex:0 0 8px}
+
+/* week */
+.week-grid{display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:8px}
+.wcol{background:#fff; border:1px solid var(--line); border-radius:11px; min-height:340px; display:flex; flex-direction:column; overflow:hidden}
+.wcol.today{border-color:#9CCBDB; box-shadow:0 0 0 1px #9CCBDB inset}
+.wcol-h{padding:9px 10px; border-bottom:1px solid var(--line-2); background:#FAFCFD; text-align:center}
+.wcol.today .wcol-h{background:var(--accent-softer)}
+.wcol-h .wd{font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:700}
+.wcol-h .wn{font-size:16px; font-weight:800; letter-spacing:-.02em}
+.wcol.today .wcol-h .wn{color:var(--accent-2)}
+.wcol-b{padding:7px; display:flex; flex-direction:column; gap:5px; flex:1}
+.apt{display:block; width:100%; text-align:left; padding:6px 7px; border-radius:7px; font-size:11px;
+  background:#E9F7F0; border-left:3px solid #2E9E6B; line-height:1.35}
+.apt:hover{background:#DFF2E9}
+.apt .ah{font-weight:800; font-size:10.5px; color:#1F7A5C; display:block}
+.apt .an{font-weight:600; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.apt .as{color:var(--muted); font-size:10px; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.apt.st-pendiente{background:#FCF3E1; border-left-color:#D2A04A}
+.apt.st-pendiente .ah{color:#825414}
+.apt.st-atendido{background:#EAF2EE; border-left-color:#7FA695}
+.apt.st-atendido .ah{color:#4C7061}
+.apt.st-cancelado{background:#FAECED; border-left-color:#C48D93; opacity:.8}
+.apt.st-cancelado .an{text-decoration:line-through; text-decoration-color:#C48D93}
+.apt.st-ausente{background:#F2EEF7; border-left-color:#A294C4}
+.wcol-empty{padding:14px 8px; text-align:center; color:var(--muted-2); font-size:11px}
+
+/* ---------- Search / tables ---------- */
+.search-wrap{position:relative; max-width:360px; width:100%}
+.search-wrap .ico{position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--muted-2)}
+.search-wrap .input{padding-left:34px}
+.table-wrap{overflow-x:auto}
+table.t{width:100%; border-collapse:collapse; font-size:13px}
+table.t th{
+  text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted);
+  padding:10px 14px; background:#FAFCFD; border-bottom:1px solid var(--line); font-weight:700; white-space:nowrap;
+}
+table.t td{padding:11px 14px; border-bottom:1px solid var(--line-2); vertical-align:middle; white-space:nowrap}
+table.t tr:last-child td{border-bottom:0}
+table.t tbody tr:hover{background:#FBFDFE}
+table.t .num{text-align:right; font-variant-numeric:tabular-nums; font-weight:600}
+.t-name{display:flex; align-items:center; gap:9px; font-weight:600}
+.mini{font-size:11px; color:var(--muted)}
+.client-row{display:flex; align-items:center; gap:11px; padding:11px 18px; border-top:1px solid var(--line-2); width:100%; text-align:left}
+.client-row:first-child{border-top:0}
+.client-row:hover{background:#F7FBFD}
+.client-row .r-main{flex:1; min-width:0}
+.client-row .r-t{font-size:13.5px; font-weight:700; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.client-row .r-s{font-size:11.5px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block}
+.cr-meta{display:flex; gap:16px; font-size:11.5px; color:var(--muted); white-space:nowrap; flex:0 0 auto}
+.cr-meta b{color:var(--text); font-weight:700}
+@media (max-width:900px){ .cr-meta{display:none} }
+
+/* ---------- Messages ---------- */
+.msg-shell{display:grid; grid-template-columns:320px minmax(0,1fr); background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; height:calc(100vh - 190px); min-height:480px; box-shadow:var(--shadow)}
+.msg-list{border-right:1px solid var(--line); display:flex; flex-direction:column; min-width:0; background:#FAFCFD}
+.msg-list-h{padding:14px 16px; border-bottom:1px solid var(--line); background:#fff}
+.msg-list-h h3{font-size:14px; margin-bottom:2px}
+.msg-list-h p{font-size:11.5px; color:var(--muted)}
+.msg-items{overflow-y:auto; flex:1; min-width:0}
+.msg-item{display:flex; gap:11px; padding:12px 14px; border-bottom:1px solid var(--line-2); width:100%; text-align:left; align-items:flex-start; min-width:0}
+.msg-item:hover{background:#F4FAFC}
+.msg-item.on{background:var(--accent-softer); box-shadow:inset 3px 0 0 var(--accent)}
+.msg-item .m-main{flex:1; min-width:0}
+.msg-item .m-top{display:flex; gap:8px; align-items:baseline}
+.msg-item .m-n{font-size:12.5px; font-weight:700; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.msg-item .m-t{font-size:10px; color:var(--muted-2); flex:0 0 auto}
+.msg-item .m-p{font-size:11.5px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:2px; display:block}
+.msg-item .m-badge{width:17px;height:17px;border-radius:50%;background:var(--accent-2);color:#fff;font-size:9.5px;font-weight:800;display:grid;place-items:center}
+.msg-pane{display:flex; flex-direction:column; min-width:0; background:#F6F9FB}
+.msg-pane-h{display:flex; align-items:center; gap:11px; padding:12px 16px; border-bottom:1px solid var(--line); background:#fff}
+.msg-pane-h .m-main{flex:1; min-width:0}
+.msg-pane-h .m-n{font-size:13.5px; font-weight:700}
+.msg-pane-h .m-s{font-size:11px; color:var(--muted); display:flex; align-items:center; gap:5px}
+.msg-back{display:none; padding:4px; color:var(--muted)}
+.chat{flex:1; overflow-y:auto; padding:18px 20px; display:flex; flex-direction:column; gap:9px}
+.day-sep{align-self:center; background:#E4EDF1; color:#5C7280; font-size:10.5px; font-weight:700; padding:3px 10px; border-radius:20px; margin:6px 0}
+.auto-note{align-self:center; max-width:85%; background:#FFF8E8; border:1px solid #F0DDB4; color:#7A5A16; font-size:11px; padding:7px 11px; border-radius:9px; text-align:center; line-height:1.45; display:flex; gap:7px; align-items:center}
+.bubble{max-width:74%; padding:8px 12px; border-radius:12px; font-size:13px; line-height:1.45; position:relative}
+.bubble .bt{font-size:10px; color:var(--muted-2); margin-top:3px; text-align:right}
+.bubble.in{background:#fff; border:1px solid var(--line); border-bottom-left-radius:4px; align-self:flex-start}
+.bubble.out{background:#DEEFE4; border:1px solid #CBE3D5; border-bottom-right-radius:4px; align-self:flex-end}
+.bubble .sender{font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:var(--accent-2); margin-bottom:2px}
+.bubble.out .sender{color:#3E6B53}
+.chat-input{display:flex; gap:8px; padding:12px 16px; border-top:1px solid var(--line); background:#fff; align-items:center}
+.chat-input .input{background:#F4F8FA; border-color:transparent}
+.chat-input .input:focus{background:#fff; border-color:var(--accent)}
+.chat-note{font-size:10.5px; color:var(--muted-2); padding:0 16px 10px; background:#fff}
+
+/* ---------- Charts ---------- */
+.chart-bars{display:flex; align-items:flex-end; gap:14px; height:180px; padding:10px 4px 0}
+.chart-bars .bar-wrap{flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; gap:6px; height:100%}
+.chart-bars .bar{width:100%; max-width:56px; border-radius:7px 7px 3px 3px; background:linear-gradient(180deg,#7CC0D6,#24799C); min-height:4px; position:relative}
+.chart-bars .bar .bv{position:absolute; top:-19px; left:0; right:0; text-align:center; font-size:10.5px; font-weight:800; color:var(--accent-2)}
+.chart-bars .bl{font-size:10.5px; color:var(--muted); font-weight:600; text-align:center}
+.hbar{margin-bottom:12px}
+.hbar:last-child{margin-bottom:0}
+.hbar-top{display:flex; justify-content:space-between; gap:8px; font-size:12px; margin-bottom:5px}
+.hbar-top .n{font-weight:600; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.hbar-top .v{color:var(--muted); font-weight:600; flex:0 0 auto}
+.hbar-track{height:9px; background:#EDF3F6; border-radius:6px; overflow:hidden}
+.hbar-fill{height:100%; border-radius:6px; background:linear-gradient(90deg,#7CC0D6,#156C8C)}
+.donut-wrap{display:flex; align-items:center; gap:22px; flex-wrap:wrap}
+.donut{width:150px; height:150px; flex:0 0 150px}
+.donut circle{fill:none; stroke-width:20}
+.donut-legend{display:grid; gap:9px; font-size:12px; flex:1; min-width:140px}
+.donut-legend div{display:flex; align-items:center; gap:7px; justify-content:space-between; border-bottom:1px dashed var(--line); padding-bottom:6px}
+.donut-legend .l{display:flex; align-items:center; gap:7px; color:var(--muted)}
+.donut-legend .n{font-weight:800}
+.legend-dot{width:9px;height:9px;border-radius:3px;display:inline-block}
+.months{display:flex; gap:6px; align-items:flex-end; height:150px; padding-top:20px}
+.months .m{flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; gap:6px; height:100%}
+.months .mb{width:100%; border-radius:6px 6px 2px 2px; background:linear-gradient(180deg,#A8D3E2,#4E96B3)}
+.months .ml{font-size:10px; color:var(--muted); font-weight:600; text-transform:capitalize}
+.months .mv{font-size:10px; font-weight:800; color:#145D79}
+
+/* ---------- Settings ---------- */
+.set-grid{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,350px); gap:16px; align-items:start}
+.set-grid > *, .ficha-grid > *{min-width:0}
+.set-row{display:flex; align-items:center; gap:12px; padding:11px 18px; border-top:1px solid var(--line-2); flex-wrap:wrap}
+.set-row:first-child{border-top:0}
+.set-row .s-main{flex:1; min-width:160px}
+.set-row .s-t{font-size:13px; font-weight:600}
+.set-row .s-s{font-size:11px; color:var(--muted)}
+.inline-num{width:82px; padding:7px 9px; text-align:right; border:1px solid var(--line); border-radius:8px; font-size:12.5px; font-weight:600}
+.inline-num:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+.switch{position:relative; width:42px; height:24px; flex:0 0 42px; border-radius:20px; background:#D6E3EA; transition:background .18s}
+.switch::after{content:""; position:absolute; top:3px; left:3px; width:18px;height:18px;border-radius:50%; background:#fff; transition:transform .18s; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch.on{background:var(--teal)}
+.switch.on::after{transform:translateX(18px)}
+.hours-row{display:flex; align-items:center; gap:10px; padding:9px 18px; border-top:1px solid var(--line-2); font-size:12.5px; flex-wrap:wrap}
+.hours-row:first-child{border-top:0}
+.hours-row .d{width:104px; font-weight:600; text-transform:capitalize}
+.hours-row .t{display:flex; align-items:center; gap:6px; color:var(--muted); font-size:12px}
+.hours-row input[type=time]{border:1px solid var(--line); border-radius:8px; padding:5px 7px; font-size:12px; font-weight:600}
+.preview-msg{background:#DEEFE4; border:1px solid #CBE3D5; border-radius:12px 12px 12px 4px; padding:11px 13px; font-size:12.5px; line-height:1.5; color:#243A2C}
+.preview-wrap{padding:14px 18px 18px; background:#FAFCFD; border-top:1px solid var(--line-2)}
+.preview-lbl{font-size:10.5px; text-transform:uppercase; letter-spacing:.09em; color:var(--muted); font-weight:700; margin-bottom:8px}
+
+/* ---------- Ficha ---------- */
+.ficha-grid{display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:16px; align-items:start}
+.ficha-head{display:flex; gap:15px; align-items:center; flex-wrap:wrap}
+.ficha-head .fh-main{flex:1; min-width:200px}
+.ficha-head h2{font-size:20px}
+.ficha-head .fh-sub{font-size:12.5px; color:var(--muted); margin-top:3px}
+.info-list{display:grid; gap:11px}
+.info-list .il{display:flex; gap:9px; align-items:flex-start; font-size:12.5px}
+.info-list .il .ico{color:var(--muted-2); margin-top:1px}
+.info-list .il span{color:var(--text); min-width:0}
+.info-list .il .lbl{display:block; font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; font-weight:700}
+.note{background:#FFFCF2; border:1px solid #F2E5C4; border-radius:9px; padding:10px 12px; font-size:12px; color:#5E4B1F; line-height:1.5; margin-bottom:8px}
+.study-item{padding:11px 13px; border:1px solid var(--line); border-radius:9px; margin-bottom:8px; background:#FBFDFE}
+.study-item:last-child{margin-bottom:0}
+.study-top{display:flex; align-items:center; gap:8px; margin-bottom:3px}
+.study-top .sn{font-size:12.5px; font-weight:700; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.rx{border-left:3px solid var(--teal); background:#F4FBFA; padding:9px 11px; border-radius:0 8px 8px 0; margin-bottom:8px; font-size:12px; line-height:1.5}
+.rx b{display:block; font-size:12px; margin-bottom:2px}
+.spec-block{border:1px solid var(--line-2); border-radius:10px; overflow:hidden; margin-bottom:10px}
+.spec-block:last-child{margin-bottom:0}
+.spec-block-h{display:flex; align-items:center; gap:8px; padding:8px 12px; background:#FAFCFD; border-bottom:1px solid var(--line-2); font-size:12px; font-weight:700}
+
+/* ---------- Modal / toast ---------- */
+.overlay{position:fixed; inset:0; background:rgba(10,32,46,.45); display:flex; align-items:center; justify-content:center; z-index:100; padding:18px; animation:fade .15s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{background:#fff; border-radius:16px; width:100%; max-width:540px; box-shadow:0 24px 70px rgba(10,32,46,.32);
+  max-height:92vh; display:flex; flex-direction:column; animation:pop .18s ease}
+@keyframes pop{from{transform:translateY(8px) scale(.99); opacity:.6}to{transform:none; opacity:1}}
+.modal-h{display:flex; align-items:flex-start; gap:12px; padding:18px 20px 12px}
+.modal-h h3{font-size:17px}
+.modal-h .sub{font-size:12px; color:var(--muted); margin-top:2px}
+.modal-x{margin-left:auto; padding:5px; border-radius:8px; color:var(--muted)}
+.modal-x:hover{background:#F4FAFC; color:var(--text)}
+.modal-b{padding:4px 20px 6px; overflow-y:auto}
+.modal-f{padding:14px 20px 18px; display:flex; gap:8px; justify-content:flex-end; border-top:1px solid var(--line-2); margin-top:10px; flex-wrap:wrap}
+.form-grid{display:grid; grid-template-columns:1fr 1fr; gap:11px}
+.form-grid .full{grid-column:1/-1}
+.detail-rows{display:grid; gap:0; border:1px solid var(--line-2); border-radius:10px; overflow:hidden; margin-bottom:14px}
+.detail-rows .dr{display:flex; gap:10px; padding:10px 12px; border-top:1px solid var(--line-2); font-size:12.5px}
+.detail-rows .dr:first-child{border-top:0}
+.detail-rows .dr .k{color:var(--muted); width:110px; flex:0 0 110px; font-size:11.5px}
+.detail-rows .dr .v{font-weight:600; flex:1; min-width:0}
+.toast{position:fixed; bottom:22px; left:50%; transform:translateX(-50%) translateY(12px); z-index:200;
+  background:var(--ink); color:#fff; padding:11px 18px; border-radius:10px; font-size:12.5px; font-weight:600;
+  box-shadow:0 10px 30px rgba(10,32,46,.32); opacity:0; transition:all .22s; pointer-events:none; max-width:92vw;
+  display:flex; align-items:center; gap:8px}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+
+/* ---------- Misc ---------- */
+.footer{padding:16px 26px 22px; border-top:1px solid var(--line); font-size:11px; color:var(--muted-2); line-height:1.6; display:flex; gap:12px; flex-wrap:wrap; align-items:center}
+.footer .brand-mini{font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-size:10px}
+.empty{padding:26px 18px; text-align:center; color:var(--muted); font-size:12.5px}
+.alert-row{display:flex; gap:10px; align-items:flex-start; padding:11px 18px; border-top:1px solid var(--line-2); width:100%; text-align:left}
+.alert-row:first-child{border-top:0}
+.alert-row:hover{background:#F7FBFD}
+.alert-row .a-ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;flex:0 0 30px}
+.alert-row .a-main{flex:1; min-width:0}
+.alert-row .a-t{font-size:12.5px; font-weight:600; display:block}
+.alert-row .a-s{font-size:11px; color:var(--muted); margin-top:1px; display:block}
+.a-amber{background:var(--amber-soft); color:var(--amber)}
+.a-red{background:var(--red-soft); color:var(--red)}
+.a-blue{background:var(--accent-soft); color:var(--accent-2)}
+.a-teal{background:var(--teal-soft); color:#0B7372}
+
+@media (max-width:1100px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dcols,.dcols-3,.set-grid,.ficha-grid{grid-template-columns:minmax(0,1fr)}
+  .msg-shell{grid-template-columns:270px minmax(0,1fr)}
+}
+@media (max-width:860px){
+  :root{--sidebar-w:262px}
+  .sidebar{position:fixed; left:0; top:0; transform:translateX(-100%); box-shadow:0 0 60px rgba(10,32,46,.35)}
+  .sidebar.open{transform:none}
+  .side-close{display:block}
+  .topbar{padding:10px 14px; min-height:58px}
+  .topbar .hamburger{display:grid; place-items:center}
+  .view{padding:16px 14px}
+  .page-head h1{font-size:19px}
+  .topbar-title .d{display:none}
+  .chip-date .txt{display:none}
+  .user-btn .u-meta{display:none}
+  .login{grid-template-columns:1fr}
+  .login-art{display:none}
+  .login-card .mobile-brand{display:flex; margin-bottom:26px}
+  .login-panel{padding:26px 20px; align-items:flex-start}
+  .msg-shell{grid-template-columns:1fr; height:auto; min-height:0}
+  .msg-list{border-right:0; max-height:none}
+  .msg-shell.show-chat .msg-list{display:none}
+  .msg-shell:not(.show-chat) .msg-pane{display:none}
+  .msg-back{display:grid; place-items:center}
+  .msg-pane{height:calc(100vh - 150px); min-height:420px}
+  .kpis{gap:10px}
+  .kpi .k-val{font-size:22px}
+  .card-pad{padding:14px}
+  .card-head{padding:13px 14px}
+  .row{padding:11px 14px}
+  .footer{padding:14px}
+  .modal-f{justify-content:stretch}
+  .modal-f .btn{flex:1}
+}
+@media (max-width:560px){
+  .kpis{grid-template-columns:1fr 1fr}
+  .form-grid{grid-template-columns:1fr}
+  .user-menu{right:12px; top:56px}
+  .msg-pane{height:calc(100vh - 140px)}
+  .page-head .actions{width:100%}
+  .page-head .actions .btn{flex:1}
+  .cal{min-width:660px}
+}
+</style>
+</head>
+<body>
+<!-- ================= LOGIN ================= -->
+<section class="login" id="login">
+  <div class="login-art">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#08303F" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      </div>
+      <div>
+        <div class="brand-name">Clínica Güemes</div>
+        <div class="brand-sub">Medicina Integral · San Juan</div>
+      </div>
+    </div>
+    <div class="login-copy">
+      <div class="eyebrow">Sistema de gestión</div>
+      <h1>Turnos, historias clínicas y estudios en un solo lugar.</h1>
+      <p>La recepción agenda, los profesionales ven su agenda del día y los estudios se informan desde el mismo sistema. Todo lo administrativo de la clínica, ordenado.</p>
+      <ul class="login-list">
+        <li><svg class="ico" viewBox="0 0 24 24"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg><span>Agenda por especialidad y profesional, sin superponer turnos</span></li>
+        <li><svg class="ico" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.8 8.8 0 0 1-4-.9L3 21l1.9-4.9A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/></svg><span>Recordatorios de turno y aviso de resultados por WhatsApp</span></li>
+        <li><svg class="ico" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg><span>Estudios pendientes de informar, a la vista de todos</span></li>
+        <li><svg class="ico" viewBox="0 0 24 24"><path d="M3 3v18h18M7 15l4-4 3 3 5-6"/></svg><span>Cobros por obra social e informes de ausentismo</span></li>
+      </ul>
+    </div>
+    <div class="login-foot">Demo de referencia · Nocodeveloper</div>
+  </div>
+  <div class="login-panel">
+    <div class="login-card">
+      <div class="brand mobile-brand">
+        <div class="brand-mark" style="width:38px;height:38px">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#08303F" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        </div>
+        <div>
+          <div class="brand-name" style="color:#0E2A3C">Clínica Güemes</div>
+          <div class="brand-sub" style="color:#5F7684">Sistema de gestión</div>
+        </div>
+      </div>
+      <h2>Entrar al sistema</h2>
+      <p class="lead">Acceso del personal de la clínica. Esta es una versión de demostración.</p>
+      <div class="field">
+        <label for="login-user">Usuario</label>
+        <input class="input" id="login-user" type="text" value="recepcion@clinicaguemes.com.ar" readonly>
+      </div>
+      <div class="field">
+        <label for="login-pass">Contraseña</label>
+        <input class="input" id="login-pass" type="password" value="demo" readonly>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="enterApp()">Entrar en modo demostración</button>
+      <div class="login-hint">
+        <svg class="ico ico-sm" viewBox="0 0 24 24" style="margin-top:2px"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+        <span>Modo demostración: no se envía ningún mensaje ni se guarda nada fuera de esta pantalla.</span>
+      </div>
+      <p class="login-note">Clínica Güemes · República del Líbano Oeste 3186, Rawson<br>San Juan, Argentina · Demo hecho por Nocodeveloper</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= APP ================= -->
+<div class="app hidden" id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="side-head">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="#08303F" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      </div>
+      <div>
+        <div class="brand-name">Clínica Güemes</div>
+        <div class="brand-sub">Sistema de gestión</div>
+      </div>
+      <button class="side-close" onclick="toggleSide(false)" aria-label="Cerrar menú">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <nav class="side-nav" id="nav"></nav>
+    <div class="side-foot">
+      <strong>Clínica Güemes</strong>
+      Rawson, San Juan<br>
+      <span id="sideFootMeta"></span>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <button class="hamburger" onclick="toggleSide(true)" aria-label="Abrir menú">
+        <svg class="ico ico-lg" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <div class="topbar-title">
+        <span class="t" id="tbTitle">Escritorio</span>
+        <span class="d" id="tbDate"></span>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-actions">
+        <span class="chip-date"><svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg><span class="txt" id="chipToday"></span></span>
+        <button class="user-btn" onclick="toggleUserMenu(event)">
+          <span class="avatar">VS</span>
+          <span class="u-meta" style="text-align:left">
+            <span class="un">Valeria Sarmiento</span>
+            <span class="ur">Recepción y admisión</span>
+          </span>
+          <svg class="ico ico-sm" viewBox="0 0 24 24" style="color:#869AA6"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+      </div>
+    </header>
+    <main class="view" id="view"></main>
+    <footer class="footer">
+      <span class="brand-mini">Nocodeveloper</span>
+      <span>Demo de referencia hecho por Nocodeveloper. Los datos son de ejemplo; en el sistema real se cargan los de la clínica.</span>
+    </footer>
+  </div>
+</div>
+
+<div id="modalRoot"></div>
+<div class="toast" id="toast"></div>
+<script>
+/* ============================================================
+   Datos de demostración — se generan en el navegador, relativos
+   a la fecha en que se abre el demo. Nada sale a ningún servidor.
+   ============================================================ */
+const ICONS = {
+  home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 10v10h5v-6h4v6h5V10"/>',
+  calendar:'<path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>',
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/>',
+  user:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  chat:'<path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.8 8.8 0 0 1-4-.9L3 21l1.9-4.9A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/>',
+  cash:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 12h.01M18 12h.01"/>',
+  chart:'<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+  arrowLeft:'<path d="M19 12H5M12 19l-7-7 7-7"/>',
+  arrowRight:'<path d="M5 12h14M12 5l7 7-7 7"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',
+  mail:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/>',
+  pin:'<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="2.6"/>',
+  card:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
+  wallet:'<path d="M20 7H5a2 2 0 0 1 0-4h13v4"/><path d="M3 5v14a2 2 0 0 0 2 2h15V7H5"/><path d="M16 13h2"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  down:'<path d="M12 4v12M6 11l6 6 6-6M4 21h16"/>',
+  up:'<path d="M12 20V8M6 13l6-6 6 6M4 3h16"/>',
+  warn:'<path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>',
+  flask:'<path d="M9 2h6M10 2v6.3L4.6 18a2 2 0 0 0 1.7 3h11.4a2 2 0 0 0 1.7-3L14 8.3V2"/><path d="M7 14h10"/>',
+  scan:'<path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/>',
+  stetho:'<path d="M6 3v5a4 4 0 0 0 8 0V3"/><path d="M6 3H4M14 3h2M10 14v2a4 4 0 0 0 8 0v-1"/><circle cx="18" cy="11" r="3"/>',
+  pill:'<path d="M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7z"/><path d="M8 8l8 8"/>',
+  clipboard:'<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12h6M9 16h4"/>',
+  heart:'<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8z"/>',
+  external:'<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+  x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  bell:'<path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
+  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/>',
+  send:'<path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/>',
+  trend:'<path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/>',
+  file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/>',
+  menu:'<path d="M3 6h18M3 12h18M3 18h18"/>'
+};
+function icon(n, cls){
+  return `<svg class="ico ${cls||''}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]||''}</svg>`;
+}
+
+/* --- utilidades --- */
+const MONTHS = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const DAYS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+const DAYS_SHORT = ['dom','lun','mar','mié','jue','vie','sáb'];
+const DAY_START = 8, DAY_END = 20, SLOT_MIN = 30, SLOT_H = 28;
+
+function pad(n){ return String(n).padStart(2,'0'); }
+function iso(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function parseISO(s){ const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
+function addDays(d, n){ const x = new Date(d.getTime()); x.setDate(x.getDate()+n); return x; }
+function startOfWeek(d){ const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); const wd = (x.getDay()+6)%7; return addDays(x, -wd); }
+function fmtLong(d){
+  const s = DAYS[d.getDay()] + ' ' + d.getDate() + ' de ' + MONTHS[d.getMonth()];
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+function fmtShort(d){ return DAYS_SHORT[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()].slice(0,3); }
+function fmtARS(n){ return '$' + Math.round(Number(n)).toLocaleString('es-AR'); }
+function fmtARS2(n){ return '$' + Number(n).toLocaleString('es-AR', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function fmtK(n){ return n >= 1000000 ? '$' + (n/1000000).toFixed(1).replace('.',',') + ' M' : (n >= 1000 ? '$' + Math.round(n/1000) + ' k' : '$' + n); }
+function to24(t){ return t; }
+function mins(t){ const [h,m] = t.split(':').map(Number); return h*60+m; }
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* RNG determinista: los datos son iguales en cada carga del mismo día */
+let _seed = 20261119;
+function rnd(){ _seed = (_seed * 1664525 + 1013904223) % 4294967296; return _seed / 4294967296; }
+function pick(a){ return a[Math.floor(rnd()*a.length)]; }
+function rint(a,b){ return a + Math.floor(rnd()*(b-a+1)); }
+
+const TODAY = (() => { const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), d.getDate()); })();
+function nowMins(){ const d = new Date(); return d.getHours()*60 + d.getMinutes(); }
+/* Reloj de la demo: fuera del horario de atención se muestra una mañana típica,
+   para que la agenda y los indicadores se vean llenos a cualquier hora. */
+const DEMO_NOW = (() => { const m = nowMins(); return (m < 8*60 || m > 19*60) ? 11*60+20 : m; })();
+
+/* --- especialidades --- */
+const SPECS = [
+  {id:'clinica', name:'Clínica médica', color:'#2E7FA3'},
+  {id:'cardio', name:'Cardiología', color:'#B5484F'},
+  {id:'derma', name:'Dermatología', color:'#BE8A2C'},
+  {id:'gineco', name:'Ginecología', color:'#7A5CA8'},
+  {id:'pedia', name:'Pediatría', color:'#2F9E7A'},
+  {id:'trauma', name:'Traumatología', color:'#8A6A44'},
+  {id:'nutri', name:'Nutrición', color:'#4C9A3F'},
+  {id:'lab', name:'Laboratorio', color:'#2C8CA6'},
+  {id:'imagenes', name:'Diagnóstico por imágenes', color:'#5A6B9E'}
+];
+const specName = id => (SPECS.find(s => s.id === id) || {}).name || id;
+const specColor = id => (SPECS.find(s => s.id === id) || {}).color || '#2E7FA3';
+
+/* --- profesionales (25) --- */
+const PROS = [
+  {id:'p1', name:'Dra. Lucía Ferreyra', spec:'clinica', room:'Consultorio 1', mat:'M.P. 3.412'},
+  {id:'p2', name:'Dr. Martín Agüero', spec:'clinica', room:'Consultorio 2', mat:'M.P. 3.918'},
+  {id:'p3', name:'Dra. Silvina Castro', spec:'clinica', room:'Consultorio 3', mat:'M.P. 4.221'},
+  {id:'p4', name:'Dr. Hernán Zalazar', spec:'clinica', room:'Consultorio 4', mat:'M.P. 4.760'},
+  {id:'p5', name:'Dr. Ricardo Orellano', spec:'cardio', room:'Consultorio 5', mat:'M.P. 2.884'},
+  {id:'p6', name:'Dra. Marcela Videla', spec:'cardio', room:'Consultorio 6', mat:'M.P. 3.155'},
+  {id:'p7', name:'Dr. Gustavo Peralta', spec:'cardio', room:'Consultorio 5', mat:'M.P. 4.032'},
+  {id:'p8', name:'Dra. Carolina Trigo', spec:'derma', room:'Consultorio 7', mat:'M.P. 3.774'},
+  {id:'p9', name:'Dra. Julieta Molina', spec:'derma', room:'Consultorio 8', mat:'M.P. 4.508'},
+  {id:'p10', name:'Dr. Pablo Guzmán', spec:'derma', room:'Consultorio 7', mat:'M.P. 3.021'},
+  {id:'p11', name:'Dra. Andrea Quiroga', spec:'gineco', room:'Consultorio 9', mat:'M.P. 2.667'},
+  {id:'p12', name:'Dra. Romina Espejo', spec:'gineco', room:'Consultorio 10', mat:'M.P. 3.590'},
+  {id:'p13', name:'Dra. Claudia Pizarro', spec:'gineco', room:'Consultorio 9', mat:'M.P. 4.140'},
+  {id:'p14', name:'Dra. Florencia Sarmiento', spec:'pedia', room:'Consultorio 11', mat:'M.P. 3.330'},
+  {id:'p15', name:'Dr. Nicolás Plaza', spec:'pedia', room:'Consultorio 12', mat:'M.P. 4.011'},
+  {id:'p16', name:'Dra. Malena Bustos', spec:'pedia', room:'Consultorio 11', mat:'M.P. 4.452'},
+  {id:'p17', name:'Dr. Sergio Cortínez', spec:'trauma', room:'Consultorio 13', mat:'M.P. 2.905'},
+  {id:'p18', name:'Dr. Diego Villalba', spec:'trauma', room:'Consultorio 14', mat:'M.P. 3.688'},
+  {id:'p19', name:'Dra. Natalia Funes', spec:'trauma', room:'Consultorio 13', mat:'M.P. 4.276'},
+  {id:'p20', name:'Lic. Valeria Toledo', spec:'nutri', room:'Consultorio 15', mat:'M.P. 5.104'},
+  {id:'p21', name:'Lic. Matías Nieva', spec:'nutri', room:'Consultorio 15', mat:'M.P. 5.377'},
+  {id:'p22', name:'Bioq. Cecilia Mercado', spec:'lab', room:'Laboratorio', mat:'M.P. 2.410'},
+  {id:'p23', name:'Bioq. Fernando Agüero', spec:'lab', room:'Laboratorio', mat:'M.P. 3.845'},
+  {id:'p24', name:'Dra. Agustina Lara', spec:'imagenes', room:'Sala de imágenes', mat:'M.P. 3.562'},
+  {id:'p25', name:'Téc. Franco Berenguer', spec:'imagenes', room:'Sala de imágenes', mat:'T.P. 1.204'}
+];
+const proName = id => (PROS.find(p => p.id === id) || {}).name || id;
+const prosOf = spec => PROS.filter(p => p.spec === spec);
+
+/* --- catálogo de prácticas y servicios --- */
+let SERVICES = [
+  {id:'s1', name:'Consulta clínica médica', spec:'clinica', dur:30, price:18000, pro:'p1'},
+  {id:'s2', name:'Control y seguimiento', spec:'clinica', dur:20, price:12000, pro:'p2'},
+  {id:'s3', name:'Certificado médico', spec:'clinica', dur:20, price:9000, pro:'p3'},
+  {id:'s4', name:'Consulta cardiológica', spec:'cardio', dur:30, price:24000, pro:'p5'},
+  {id:'s5', name:'Electrocardiograma', spec:'cardio', dur:40, price:15000, pro:'p6'},
+  {id:'s6', name:'Holter 24 horas', spec:'cardio', dur:60, price:32000, pro:'p7'},
+  {id:'s7', name:'Ecocardiograma', spec:'cardio', dur:45, price:34000, pro:'p5'},
+  {id:'s8', name:'Consulta dermatológica', spec:'derma', dur:30, price:22000, pro:'p8'},
+  {id:'s9', name:'Crioterapia', spec:'derma', dur:20, price:17000, pro:'p9'},
+  {id:'s10', name:'Biopsia de piel', spec:'derma', dur:40, price:28000, pro:'p10'},
+  {id:'s11', name:'Consulta ginecológica', spec:'gineco', dur:30, price:24000, pro:'p11'},
+  {id:'s12', name:'Papanicolaou', spec:'gineco', dur:30, price:18000, pro:'p12'},
+  {id:'s13', name:'Colposcopía', spec:'gineco', dur:40, price:26000, pro:'p13'},
+  {id:'s14', name:'Ecografía ginecológica', spec:'gineco', dur:40, price:28000, pro:'p24'},
+  {id:'s15', name:'Consulta pediátrica', spec:'pedia', dur:30, price:19000, pro:'p14'},
+  {id:'s16', name:'Control del niño sano', spec:'pedia', dur:25, price:15000, pro:'p15'},
+  {id:'s17', name:'Vacunación', spec:'pedia', dur:20, price:8000, pro:'p16'},
+  {id:'s18', name:'Consulta traumatológica', spec:'trauma', dur:30, price:22000, pro:'p17'},
+  {id:'s19', name:'Infiltración articular', spec:'trauma', dur:40, price:30000, pro:'p18'},
+  {id:'s20', name:'Inmovilización y yeso', spec:'trauma', dur:45, price:24000, pro:'p19'},
+  {id:'s21', name:'Consulta nutricional', spec:'nutri', dur:40, price:16000, pro:'p20'},
+  {id:'s22', name:'Plan alimentario personalizado', spec:'nutri', dur:40, price:14000, pro:'p21'},
+  {id:'s23', name:'Extracción de sangre', spec:'lab', dur:15, price:6000, pro:'p22'},
+  {id:'s24', name:'Análisis clínicos de rutina', spec:'lab', dur:20, price:13000, pro:'p23'},
+  {id:'s25', name:'Radiografía', spec:'imagenes', dur:20, price:12000, pro:'p25'},
+  {id:'s26', name:'Ecografía abdominal', spec:'imagenes', dur:40, price:26000, pro:'p24'},
+  {id:'s27', name:'Mamografía', spec:'imagenes', dur:40, price:29000, pro:'p24'}
+];
+const svc = id => SERVICES.find(s => s.id === id);
+const svcsOf = spec => SERVICES.filter(s => s.spec === spec);
+
+/* --- obras sociales (solo como texto, sin convenios inventados) --- */
+const OBRAS = [
+  {n:'Particular', w:16}, {n:'PAMI', w:24}, {n:'OSDE', w:14},
+  {n:'Swiss Medical', w:12}, {n:'Obra Social Provincial', w:26}, {n:'OMINT', w:8}
+];
+function pickObra(){ let r = rnd()*100, acc = 0; for(const o of OBRAS){ acc += o.w; if(r <= acc) return o.n; } return 'Particular'; }
+const PLANS = ['210','310','410','Serie Dorada','Serie Plateada','Plan 1000','Plan 2000','Sin plan'];
+
+/* --- pacientes (120) --- */
+const FIRSTS = ['María','Ana','Laura','Carolina','Gabriela','Silvina','Verónica','Claudia','Marcela','Patricia',
+  'Andrea','Cecilia','Romina','Natalia','Daniela','Luciana','Alejandra','Valeria','Florencia','Sofía',
+  'Micaela','Agustina','Camila','Julieta','Malena','Eliana','Roxana','Mirta','Norma','Griselda',
+  'Juan','Carlos','José','Luis','Diego','Martín','Pablo','Gustavo','Sergio','Marcelo',
+  'Fernando','Ricardo','Eduardo','Alejandro','Javier','Matías','Nicolás','Franco','Lucas','Hernán',
+  'Rubén','Oscar','Raúl','Walter','Ezequiel','Emiliano','Tomás','Federico','Iván','Gonzalo'];
+const LASTS = ['Agüero','Aciar','Albarracín','Andrada','Arce','Astudillo','Balmaceda','Barceló','Berenguer','Bustos',
+  'Cabrera','Campillay','Carrizo','Castro','Chávez','Córdoba','Cornejo','Cortínez','Dávila','Delgado',
+  'Domínguez','Echegaray','Escobar','Espejo','Ferreyra','Figueroa','Flores','Funes','Galdeano','Gatica',
+  'Gil','Godoy','Gómez','González','Guzmán','Herrera','Ibáñez','Jofré','Juárez','Lara',
+  'Leiva','Lemos','Lima','Lozano','Lucero','Marín','Márquez','Martínez','Mattar','Medina',
+  'Mercado','Molina','Montaño','Morales','Moretti','Muñoz','Narváez','Navarro','Nieva','Olivera',
+  'Orellano','Ortiz','Páez','Paredes','Pastrán','Peralta','Pérez','Pizarro','Plaza','Quiroga',
+  'Ramírez','Ríos','Rivero','Rodríguez','Rojas','Román','Ruiz','Sáez','Salinas','Sánchez',
+  'Sarmiento','Segovia','Silva','Sosa','Suárez','Tapia','Toledo','Torres','Trigo','Valdez',
+  'Vargas','Vega','Vera','Videla','Villalba','Villanueva','Yánez','Zalazar','Zúñiga','Aguirre'];
+const BARRIOS = ['Villa Krause, Rawson','Rawson','Capital','Rivadavia','Chimbas','Pocito','Santa Lucía','Caucete','Albardón','Ullum','Sarmiento','9 de Julio'];
+const _names = new Set();
+const PATIENTS = [];
+let _pi = 0, _pidx = 0;
+while(PATIENTS.length < 120){
+  const first = FIRSTS[_pidx % FIRSTS.length];
+  const l1 = LASTS[(_pidx*3 + _pi) % LASTS.length];
+  const l2 = LASTS[(_pidx*7 + 19 + _pi) % LASTS.length];
+  _pidx++;
+  const name = first + ' ' + l1 + ' ' + l2;
+  if(_names.has(name)){ if(_pidx > 900){ _pi++; _pidx = 0; } continue; }
+  _names.add(name);
+  const i = PATIENTS.length;
+  const year = rnd() < 0.22 ? rint(2012, 2021) : (rnd() < 0.5 ? rint(1965, 1995) : rint(1940, 1964));
+  const obra = pickObra();
+  PATIENTS.push({
+    id:'c'+(i+1), name,
+    dni: String(rint(20111222, 46999111)),
+    phone: '+54 264 ' + rint(400, 699) + '-' + String(rint(1000, 9999)),
+    email: name.split(' ')[0].toLowerCase().replace(/[áéíóúñ]/g, c => ({á:'a',é:'e',í:'i',ó:'o',ú:'u',ñ:'n'}[c])) + '.' + l1.toLowerCase().replace(/[áéíóúñ]/g, c => ({á:'a',é:'e',í:'i',ó:'o',ú:'u',ñ:'n'}[c])) + '@correo.com',
+    since: String(rint(2016, 2024)),
+    born: String(year),
+    address: BARRIOS[i % BARRIOS.length],
+    obra, plan: obra === 'Particular' ? 'Sin plan' : pick(PLANS),
+    whatsapp: i % 5 !== 3,
+    notes: i % 6 === 0 ? ['Alérgica a la penicilina.'] : (i % 11 === 0 ? ['Hipertensión en tratamiento. Control cada 3 meses.'] : (i % 9 === 0 ? ['Prefiere turnos después de las 17:00.'] : []))
+  });
+}
+const cli = id => PATIENTS.find(c => c.id === id);
+
+/* --- turnos --- */
+const APPOINTMENTS = [];
+let _aptId = 1;
+function addApt(clientId, serviceId, proId, dateISO, time, status){
+  const s = svc(serviceId);
+  APPOINTMENTS.push({
+    id:'a'+(_aptId++), client: clientId, service: serviceId, pro: proId || s.pro,
+    date: dateISO, time, dur: s.dur, price: s.price, status
+  });
+}
+const SLOTS = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30',
+  '14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00'];
+
+/* Turnos de hoy: la agenda se ve llena desde que se entra, concentrada en
+   los profesionales que atienden en el día (carriles poblados). */
+const todayPlan = [
+  ['c3','s23','p22','08:00','atendido'],
+  ['c11','s1','p1','08:30','atendido'],
+  ['c68','s24','p23','08:40','atendido'],
+  ['c24','s11','p11','09:00','atendido'],
+  ['c7','s5','p6','09:00','atendido'],
+  ['c29','s2','p1','09:10','atendido'],
+  ['c44','s23','p22','09:20','atendido'],
+  ['c41','s15','p14','09:30','atendido'],
+  ['c14','s12','p12','09:50','atendido'],
+  ['c57','s1','p1','10:00','atendido'],
+  ['c5','s26','p24','10:00','atendido'],
+  ['c19','s8','p8','10:00','atendido'],
+  ['c2','s4','p5','10:10','confirmado'],
+  ['c31','s16','p15','10:10','confirmado'],
+  ['c33','s18','p17','10:30','confirmado'],
+  ['c22','s13','p13','10:40','confirmado'],
+  ['c17','s10','p9','10:50','confirmado'],
+  ['c73','s3','p4','11:00','confirmado'],
+  ['c92','s7','p5','11:00','confirmado'],
+  ['c77','s27','p24','11:00','confirmado'],
+  ['c60','s15','p14','11:00','confirmado'],
+  ['c48','s19','p18','11:20','pendiente'],
+  ['c95','s8','p10','11:50','pendiente'],
+  ['c88','s26','p24','12:00','pendiente'],
+  ['c81','s18','p19','12:10','pendiente'],
+  ['c6','s1','p3','15:00','confirmado'],
+  ['c70','s18','p17','15:00','confirmado'],
+  ['c66','s11','p11','15:30','confirmado'],
+  ['c58','s27','p24','16:00','confirmado'],
+  ['c52','s2','p2','16:00','confirmado'],
+  ['c27','s12','p12','16:20','pendiente'],
+  ['c38','s15','p14','16:30','confirmado'],
+  ['c84','s8','p8','17:00','pendiente'],
+  ['c99','s4','p5','17:30','confirmado']
+];
+todayPlan.forEach(([c,s,p,t,st]) => {
+  let status = st;
+  const m = mins(t);
+  if(m < DEMO_NOW - 25) status = rnd() > 0.13 ? 'atendido' : 'ausente';
+  else if(m < DEMO_NOW) status = rnd() > 0.22 ? 'atendido' : 'ausente';
+  addApt(c, s, p, iso(TODAY), t, status);
+});
+
+/* Turnos del mes: días anteriores y siguientes, con volumen realista */
+for(let off = -20; off <= 12; off++){
+  if(off === 0) continue;
+  const d = addDays(TODAY, off);
+  if(d.getDay() === 0) continue; // domingo cerrado
+  const base = off < 0 ? 3.4 : (off <= 6 ? 4.2 : 2.2);
+  let n = Math.floor(base + rnd()*2.2);
+  if(d.getDay() === 6) n = Math.max(1, n - 2);
+  const used = {};
+  for(let k = 0; k < n; k++){
+    const s = pick(SERVICES);
+    const pros = prosOf(s.spec);
+    const pro = (s.spec !== 'imagenes' && s.spec !== 'lab' && rnd() < 0.55) ? s.pro : pick(pros).id;
+    const time = pick(SLOTS);
+    const key = pro + time;
+    if(used[key]) continue;
+    used[key] = true;
+    const client = pick(PATIENTS).id;
+    let status;
+    if(off < 0) status = rnd() < 0.84 ? 'atendido' : (rnd() < 0.5 ? 'ausente' : 'cancelado');
+    else status = rnd() < 0.7 ? 'confirmado' : 'pendiente';
+    addApt(client, s.id, pro, iso(d), time, status);
+  }
+}
+APPOINTMENTS.sort((a,b) => (a.date + a.time).localeCompare(b.date + b.time));
+
+/* --- estudios --- */
+const STUDIES = [];
+let _stId = 1;
+const STUDY_NAMES = ['Hemograma completo','Perfil lipídico','Glucemia en ayunas','Hepatograma','Análisis de orina',
+  'Radiografía de tórax','Ecografía abdominal','Mamografía bilateral','Papanicolaou','Electrocardiograma','Holter 24 horas','Ecografía tiroidea'];
+const STUDY_SPEC = {'Hemograma completo':'lab','Perfil lipídico':'lab','Glucemia en ayunas':'lab','Hepatograma':'lab','Análisis de orina':'lab',
+  'Radiografía de tórax':'imagenes','Ecografía abdominal':'imagenes','Mamografía bilateral':'imagenes','Papanicolaou':'gineco','Electrocardiograma':'cardio','Holter 24 horas':'cardio','Ecografía tiroidea':'imagenes'};
+function addStudy(clientId, studyName, dateISO, status, proId){
+  STUDIES.push({id:'e'+(_stId++), client:clientId, name:studyName, date:dateISO, status:status, pro: proId || pick(prosOf(STUDY_SPEC[studyName])).id});
+}
+/* 8 estudios pendientes de informar, tomados de turnos recientes */
+[['c5','Ecografía abdominal',2],['c11','Hemograma completo',1],['c24','Papanicolaou',3],['c7','Holter 24 horas',2],
+ ['c41','Radiografía de tórax',1],['c68','Perfil lipídico',2],['c77','Mamografía bilateral',3],['c19','Ecografía tiroidea',1]]
+ .forEach(([c,n,d]) => addStudy(c, n, iso(addDays(TODAY, -d)), 'pendiente'));
+/* estudios ya informados, para el historial de las fichas */
+for(const c of PATIENTS.slice(0, 70)){
+  const k = rint(1,2);
+  for(let i=0;i<k;i++){
+    const n = pick(STUDY_NAMES);
+    addStudy(c.id, n, iso(addDays(TODAY, -(6 + rint(0, 160)))), 'informado');
+  }
+}
+const pendingStudies = () => STUDIES.filter(s => s.status === 'pendiente').sort((a,b) => a.date.localeCompare(b.date));
+const studiesOf = id => STUDIES.filter(s => s.client === id).sort((a,b) => b.date.localeCompare(a.date));
+
+/* --- recetas --- */
+const MEDS = [
+  ['Amoxicilina 500 mg', '1 comprimido cada 8 horas durante 7 días'],
+  ['Ibuprofeno 400 mg', '1 comprimido cada 8 horas por 5 días, después de las comidas'],
+  ['Enalapril 10 mg', '1 comprimido por día en ayunas. Control de presión mensual'],
+  ['Metformina 850 mg', '1 comprimido con el almuerzo. Control de glucemia cada 3 meses'],
+  ['Loratadina 10 mg', '1 comprimido por día por 10 días'],
+  ['Omeprazol 20 mg', '1 cápsula por día, 30 minutos antes del desayuno'],
+  ['Salbutamol aerosol', '2 disparos cada 6 horas si hay falta de aire'],
+  ['Levotiroxina 50 mcg', '1 comprimido por día en ayunas, 30 minutos antes del desayuno'],
+  ['Vitamina D 1000 UI', '1 comprimido por día durante 3 meses'],
+  ['Hierro 325 mg', '1 comprimido por día con jugo de naranja']
+];
+const PRESCRIPTIONS = [];
+let _rxId = 1;
+for(const c of PATIENTS){
+  if(rnd() < 0.55){
+    const k = rint(1,2);
+    for(let i=0;i<k;i++){
+      const [med, ind] = pick(MEDS);
+      const spec = pick(SPECS).id;
+      PRESCRIPTIONS.push({id:'rx'+(_rxId++), client:c.id, med, ind, spec,
+        date: iso(addDays(TODAY, -(2 + rint(0, 200)))), pro: pick(prosOf(spec)).id});
+    }
+  }
+}
+const rxOf = id => PRESCRIPTIONS.filter(r => r.client === id).sort((a,b) => b.date.localeCompare(a.date));
+
+/* --- historial de consultas (para la ficha) --- */
+const VISITS = {};
+function ensureVisits(id){
+  if(VISITS[id]) return VISITS[id];
+  const list = APPOINTMENTS.filter(a => a.client === id && a.status === 'atendido' && a.date <= iso(TODAY))
+    .map(a => ({date: a.date, service: a.service, pro: a.pro, price: a.price, status:'atendido'}));
+  const extra = 2 + Math.floor(rnd()*4);
+  for(let i = 0; i < extra; i++){
+    const d = addDays(TODAY, -(30 + Math.floor(rnd()*420)));
+    if(d.getDay() === 0) continue;
+    const s = pick(SERVICES);
+    list.push({date: iso(d), service: s.id, pro: pick(prosOf(s.spec)).id, price: s.price, status:'atendido'});
+  }
+  if(!list.length){
+    const s = pick(SERVICES);
+    list.push({date: iso(addDays(TODAY, -(40 + Math.floor(rnd()*200)))), service: s.id, pro: pick(prosOf(s.spec)).id, price: s.price, status:'atendido'});
+  }
+  list.sort((a,b) => b.date.localeCompare(a.date));
+  VISITS[id] = list;
+  return list;
+}
+const lastVisit = id => { const v = ensureVisits(id); return v.length ? v[0] : null; };
+const daysSince = id => { const v = lastVisit(id); return v ? Math.round((TODAY - parseISO(v.date))/86400000) : 999; };
+
+/* --- pagos --- */
+const PAYMENTS = [];
+let _payId = 1;
+const METHODS = ['Efectivo','Transferencia','Tarjeta'];
+const METHODS_SEQ = ['Efectivo','Efectivo','Transferencia','Efectivo','Tarjeta','Transferencia','Efectivo','Efectivo','Transferencia','Tarjeta'];
+let _mi = 0;
+function nextMethod(){ const m = METHODS_SEQ[_mi % METHODS_SEQ.length]; _mi++; return m; }
+function addPay(clientId, serviceId, dateISO, amount, method, status, proId, obra){
+  PAYMENTS.push({id:'y'+(_payId++), client:clientId, service:serviceId, date:dateISO, amount, method, status, pro:proId, obra});
+}
+APPOINTMENTS.filter(a => a.status === 'atendido').forEach(a => {
+  const d = parseISO(a.date);
+  if(d.getMonth() !== TODAY.getMonth() || d.getFullYear() !== TODAY.getFullYear()) return;
+  const c = cli(a.client);
+  const isRecent = d.getTime() >= addDays(TODAY, -2).getTime();
+  addPay(a.client, a.service, a.date, a.price, nextMethod(), isRecent && rnd() < 0.4 ? 'pendiente' : 'pagado', a.pro, c.obra);
+});
+APPOINTMENTS.filter(a => a.status === 'atendido' && a.date < iso(TODAY)).slice(-7).forEach(a => {
+  const d = parseISO(a.date);
+  const c = cli(a.client);
+  if(d.getMonth() === TODAY.getMonth() && !PAYMENTS.some(p => p.client === a.client && p.date === a.date && p.service === a.service)){
+    addPay(a.client, a.service, a.date, a.price, nextMethod(), 'pendiente', a.pro, c.obra);
+  }
+});
+PAYMENTS.sort((a,b) => (b.date).localeCompare(a.date));
+
+/* --- mensajes --- */
+const THREADS = [
+  {id:'t1', client:'c11', unread:2, msgs:[
+    {from:'out', auto:true, text:'Hola María, le saluda Clínica Güemes. Le recordamos su turno de hoy a las 8:30 con la Dra. Lucía Ferreyra (clínica médica). Responda SÍ para confirmar o NO para reprogramar.', t:'Hoy 06:30'},
+    {from:'in', text:'Sí, confirmo. Ya estoy en la sala de espera.', t:'Hoy 08:12'},
+    {from:'out', text:'Gracias. La atienden en el Consultorio 1, en unos minutos.', t:'Hoy 08:14'},
+    {from:'in', text:'Perfecto. ¿Atienden por OSDE?', t:'Hoy 08:16'},
+    {from:'in', text:'Es la primera vez que me atiendo con ustedes.', t:'Hoy 08:17'}
+  ]},
+  {id:'t2', client:'c5', unread:1, msgs:[
+    {from:'out', auto:true, text:'Hola Laura, le escribimos de Clínica Güemes. Los resultados de la Ecografía abdominal del martes ya están listos. Puede retirarlos en recepción de 8 a 20 h, o solicitar el envío por este medio.', t:'Hoy 07:50'},
+    {from:'in', text:'Hola, ¿me los pueden enviar por acá, por favor?', t:'Hoy 09:05'}
+  ]},
+  {id:'t3', client:'c19', unread:1, msgs:[
+    {from:'out', auto:true, text:'Hola Marcela, le recordamos su turno de mañana a las 17:30 con el Dr. Pablo Guzmán (dermatología) para una biopsia de piel. Responda SÍ para confirmar o NO para reprogramar.', t:'Ayer 18:00'},
+    {from:'in', text:'Hola, no voy a poder ir mañana. ¿Se puede pasar al viernes a la tarde?', t:'Ayer 19:22'},
+    {from:'out', text:'Sin problema. Le reservamos el viernes a las 17:30 con el Dr. Guzmán. ¿Le sirve?', t:'Ayer 19:30'}
+  ]},
+  {id:'t4', client:'c24', unread:0, msgs:[
+    {from:'out', auto:true, text:'Hola Ana, le recordamos que retiró los resultados del Papanicolaou el martes. El informe de la Dra. Romina Espejo ya está firmado y disponible en su ficha.', t:'Ayer 12:10'},
+    {from:'in', text:'Gracias. ¿Puedo pedir un turno de control?', t:'Ayer 12:40'},
+    {from:'out', text:'Sí. Tenemos lugar el martes 11:30 con la Dra. Romina Espejo. Se lo reservamos y le confirmamos mañana.', t:'Ayer 12:45'},
+    {from:'in', text:'Listo, muchas gracias.', t:'Ayer 12:47'}
+  ]},
+  {id:'t5', client:'c33', unread:0, msgs:[
+    {from:'out', auto:true, text:'Hola Viviana, le recordamos su turno de hoy a las 10:30 con el Dr. Sergio Cortínez (traumatología). Responda SÍ para confirmar.', t:'Hoy 07:00'},
+    {from:'in', text:'Sí, confirmo. ¿Puedo abonar con transferencia?', t:'Hoy 07:35'},
+    {from:'out', text:'Sí, al finalizar le enviamos el alias por este medio.', t:'Hoy 07:38'},
+    {from:'in', text:'Gracias.', t:'Hoy 07:39'}
+  ]},
+  {id:'t6', client:'c41', unread:0, msgs:[
+    {from:'out', auto:true, text:'Hola Camila, le recordamos el control del niño sano de hoy a las 9:30 con la Dra. Florencia Sarmiento (pediatría). Responda SÍ para confirmar.', t:'Hoy 06:45'},
+    {from:'in', text:'Sí, confirmo. ¿Puedo llevar la libreta de vacunas?', t:'Hoy 07:20'},
+    {from:'out', text:'Sí, por favor tráigala. Le va a servir para completar el calendario.', t:'Hoy 07:22'}
+  ]},
+  {id:'t7', client:'c56', unread:0, msgs:[
+    {from:'in', text:'Buenas tardes, quería saber si la consulta con la Lic. Valeria Toledo atiende por PAMI.', t:'Lun 16:40'},
+    {from:'out', text:'Hola Rocío, la Lic. Valeria Toledo atiende por PAMI con orden de la obra social. ¿Le reservamos un turno para esta semana?', t:'Lun 16:52'},
+    {from:'in', text:'Sí, por favor, cualquier día a la mañana.', t:'Lun 17:05'},
+    {from:'out', text:'Le reservamos el miércoles a las 11:30. Le confirmamos por acá el día anterior.', t:'Lun 17:10'}
+  ]},
+  {id:'t8', client:'c68', unread:0, msgs:[
+    {from:'out', auto:true, text:'Hola Omar, le recordamos su turno de hoy a las 11:30 en el Laboratorio para análisis clínicos de rutina. Recuerde concurrir con 8 horas de ayuno.', t:'Hoy 06:50'},
+    {from:'in', text:'Sí, ya estoy en camino.', t:'Hoy 11:02'}
+  ]},
+  {id:'t9', client:'c48', unread:0, msgs:[
+    {from:'out', auto:true, text:'Hola Eliana, le recordamos su turno de hoy a las 15:00 con la Dra. Natalia Funes (traumatología) para la inmovilización. Responda SÍ para confirmar.', t:'Hoy 07:10'},
+    {from:'in', text:'Hola, estoy con fiebre. ¿Se puede mover para la semana que viene?', t:'Hoy 09:47'},
+    {from:'out', text:'Por supuesto, cuídese. Le proponemos el lunes a las 15:00. ¿Le sirve?', t:'Hoy 09:52'}
+  ]},
+  {id:'t10', client:'c92', unread:0, msgs:[
+    {from:'in', text:'Hola, necesito repetir la receta de Enalapril para mi mamá.', t:'Dom 10:15'},
+    {from:'out', text:'Hola Franco, el Dr. Ricardo Orellano atiende los martes y jueves. ¿Le reservamos un turno para que le renueve la receta?', t:'Dom 10:40'},
+    {from:'in', text:'Sí, el jueves a las 17:00 si se puede.', t:'Dom 10:52'},
+    {from:'out', text:'Reservado, jueves 17:00 con el Dr. Orellano. Le confirmamos por acá.', t:'Dom 10:55'}
+  ]}
+];
+
+/* --- configuración --- */
+const SETTINGS = {
+  reminderOn: true,
+  reminderHours: 24,
+  hours: {'Lunes':['08:00','20:00'],'Martes':['08:00','20:00'],'Miércoles':['08:00','20:00'],'Jueves':['08:00','20:00'],'Viernes':['08:00','20:00'],'Sábado':['08:00','13:00'],'Domingo':['08:00','08:00']},
+  sundayOpen: false,
+  clinic: {
+    name: 'Clínica Güemes — Medicina Integral',
+    phone: '+54 264 482-2705',
+    address: 'República del Líbano Oeste 3186, Rawson, Villa Krause · J5425 San Juan'
+  },
+  publicUrl: 'https://clientes-demo-clinicaguemes.rddxeh.easypanel.host/'
+};
+</script>
+<script>
+/* ============================================================
+   Estado y navegación
+   ============================================================ */
+const state = {
+  section: 'escritorio',
+  agendaMode: 'dia',
+  agendaDate: new Date(TODAY.getTime()),
+  agendaSpec: '',
+  agendaPro: '',
+  clientId: null,
+  clientQ: '',
+  threadId: 't1',
+  showChat: false,
+  userMenu: false
+};
+const SECTIONS = [
+  {id:'escritorio', label:'Escritorio', icon:'home'},
+  {id:'agenda', label:'Agenda', icon:'calendar'},
+  {id:'pacientes', label:'Pacientes', icon:'users'},
+  {id:'mensajes', label:'Mensajes', icon:'chat'},
+  {id:'pagos', label:'Pagos', icon:'cash'},
+  {id:'informes', label:'Informes', icon:'chart'},
+  {id:'ajustes', label:'Ajustes', icon:'gear'}
+];
+const TITLES = {
+  escritorio:'Escritorio', agenda:'Agenda', pacientes:'Pacientes', mensajes:'Mensajes',
+  pagos:'Pagos', informes:'Informes', ajustes:'Ajustes', ficha:'Ficha del paciente'
+};
+const STATUS_LABEL = {confirmado:'Confirmado', pendiente:'Pendiente', atendido:'Atendido', cancelado:'Cancelado', ausente:'No asistió'};
+
+function unreadTotal(){ return THREADS.reduce((n, t) => n + (t.unread || 0), 0); }
+function initials(name){ return name.split(' ').filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase(); }
+function aptsOn(d){ return APPOINTMENTS.filter(a => a.date === d).sort((a,b) => a.time.localeCompare(b.time)); }
+function aptsRange(from, to){ return APPOINTMENTS.filter(a => a.date >= from && a.date <= to); }
+function statusPill(st){
+  const cls = {confirmado:'pill-green', pendiente:'pill-amber', atendido:'pill-blue', cancelado:'pill-red', ausente:'pill-violet'}[st] || 'pill-gray';
+  return `<span class="pill ${cls}">${STATUS_LABEL[st] || st}</span>`;
+}
+function paidMonth(){
+  const y = TODAY.getFullYear(), m = TODAY.getMonth();
+  return PAYMENTS.filter(p => p.status === 'pagado' && parseISO(p.date).getMonth() === m && parseISO(p.date).getFullYear() === y)
+    .reduce((s,p) => s + p.amount, 0);
+}
+function pendingTotal(){ return PAYMENTS.filter(p => p.status === 'pendiente' && parseISO(p.date).getMonth() === TODAY.getMonth()).reduce((s,p) => s + p.amount, 0); }
+function todayRevenue(){ return PAYMENTS.filter(p => p.date === iso(TODAY) && p.status === 'pagado').reduce((s,p) => s + p.amount, 0); }
+function occupancy(dISO){
+  const apts = aptsOn(dISO).filter(a => a.status !== 'cancelado' && a.status !== 'ausente');
+  if(!apts.length) return 0;
+  const booked = apts.reduce((s,a) => s + a.dur, 0);
+  const activePros = new Set(apts.map(a => a.pro)).size;
+  const cap = Math.min(activePros, 8) * 8 * 60;
+  return Math.min(100, Math.round(booked / cap * 100));
+}
+function inConsultNow(){
+  const now = DEMO_NOW;
+  return APPOINTMENTS.filter(a => a.date === iso(TODAY) && a.status !== 'cancelado' && a.status !== 'ausente'
+    && mins(a.time) <= now && now < mins(a.time) + a.dur)
+    .sort((a,b) => a.time.localeCompare(b.time));
+}
+function noVolver(){
+  return PATIENTS.filter(c => daysSince(c.id) > 75).sort((a,b) => daysSince(b.id) - daysSince(a.id));
+}
+
+function enterApp(){
+  document.getElementById('login').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('tbDate').textContent = fmtLong(TODAY) + ' · ' + TODAY.getFullYear();
+  document.getElementById('chipToday').textContent = fmtLong(TODAY);
+  renderNav();
+  go('escritorio');
+  toast('Modo demostración activo: los datos son de ejemplo.');
+  window.scrollTo(0,0);
+}
+function renderNav(){
+  const nav = document.getElementById('nav');
+  const meta = document.getElementById('sideFootMeta');
+  if(meta){
+    const hoy = aptsOn(iso(TODAY)).filter(a => a.status !== 'cancelado' && a.status !== 'ausente').length;
+    const est = pendingStudies().length;
+    meta.textContent = hoy + ' turnos hoy · ' + est + ' estudios sin informar';
+  }
+  nav.innerHTML = '<div class="side-label">Operación diaria</div>' + SECTIONS.map(s => {
+    const act = (state.section === s.id || (s.id === 'pacientes' && state.section === 'ficha')) ? 'active' : '';
+    const badge = s.id === 'mensajes' && unreadTotal() ? `<span class="nav-badge">${unreadTotal()}</span>` : '';
+    return `<button class="nav-item ${act}" onclick="go('${s.id}')">${icon(s.icon)}<span>${s.label}</span>${badge}</button>`;
+  }).join('') + `<div class="side-label" style="margin-top:10px">Sitio público</div>
+  <a class="nav-item" href="${SETTINGS.publicUrl}" target="_blank" rel="noopener">${icon('external')}<span>Ver la web pública</span></a>`;
+}
+function go(sec){
+  state.section = sec;
+  state.userMenu = false;
+  const root = document.getElementById('view');
+  root.innerHTML = '';
+  document.getElementById('tbTitle').textContent = TITLES[sec] || sec;
+  document.querySelectorAll('.um-menu').forEach(n => n.remove());
+  renderNav();
+  toggleSide(false);
+  if(sec === 'escritorio') viewEscritorio(root);
+  else if(sec === 'agenda') viewAgenda(root);
+  else if(sec === 'pacientes') viewPacientes(root);
+  else if(sec === 'ficha') viewFicha(root);
+  else if(sec === 'mensajes') viewMensajes(root);
+  else if(sec === 'pagos') viewPagos(root);
+  else if(sec === 'informes') viewInformes(root);
+  else if(sec === 'ajustes') viewAjustes(root);
+  window.scrollTo(0,0);
+}
+function toggleSide(open){
+  const sb = document.getElementById('sidebar');
+  if(open) sb.classList.add('open'); else sb.classList.remove('open');
+}
+function toggleUserMenu(e){
+  e.stopPropagation();
+  const exist = document.querySelector('.um-menu');
+  if(exist){ exist.remove(); return; }
+  const m = document.createElement('div');
+  m.className = 'user-menu um-menu';
+  m.innerHTML = `<div class="um-head"><strong>Valeria Sarmiento</strong><span>Recepción y admisión · recepcion@clinicaguemes.com.ar</span></div>
+    <a href="${SETTINGS.publicUrl}" target="_blank" rel="noopener">${icon('external','ico-sm')} Ver la web pública</a>
+    <button onclick="go('ajustes')">${icon('gear','ico-sm')} Ajustes de la clínica</button>
+    <hr>
+    <button onclick="logout()">${icon('logout','ico-sm')} Salir del sistema</button>`;
+  document.body.appendChild(m);
+}
+function logout(){
+  document.querySelectorAll('.um-menu').forEach(n => n.remove());
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('login').classList.remove('hidden');
+  state.section = 'escritorio';
+  window.scrollTo(0,0);
+}
+document.addEventListener('click', () => { document.querySelectorAll('.um-menu').forEach(n => n.remove()); });
+
+/* --- toast / modal --- */
+let _toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.innerHTML = icon('check','ico-sm') + '<span>' + esc(msg) + '</span>';
+  t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => t.classList.remove('show'), 3600);
+}
+function openModal(html, opts){
+  document.getElementById('modalRoot').innerHTML = `<div class="overlay" onclick="if(event.target===this) closeModal()"><div class="modal">${html}</div></div>`;
+  document.body.style.overflow = 'hidden';
+  if(opts && opts.focus) setTimeout(() => { const el = document.getElementById(opts.focus); if(el) el.focus(); }, 60);
+}
+function closeModal(){
+  document.getElementById('modalRoot').innerHTML = '';
+  document.body.style.overflow = '';
+}
+
+/* ============================================================
+   ESCRITORIO
+   ============================================================ */
+function viewEscritorio(root){
+  const todayApts = aptsOn(iso(TODAY)).filter(a => a.status !== 'cancelado' && a.status !== 'ausente');
+  const inConsult = inConsultNow();
+  const studies = pendingStudies();
+  const noVol = noVolver();
+  const todayPays = PAYMENTS.filter(p => p.date === iso(TODAY));
+  const tomorrow = aptsOn(iso(addDays(TODAY,1))).filter(a => a.status !== 'cancelado');
+  const aurora = (() => { const h = Math.floor(DEMO_NOW/60); return h < 12 ? 'Buenos días' : (h < 19 ? 'Buenas tardes' : 'Buenas noches'); })();
+
+  root.innerHTML = `
+  <div class="page-head">
+    <div>
+      <h1>${aurora}, Valeria</h1>
+      <div class="sub">${fmtLong(TODAY)} · ${todayApts.length} turnos en agenda, ${inConsult.length} profesionales en consulta.</div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="go('informes')">${icon('chart')} Ver informes</button>
+      <button class="btn btn-primary" onclick="newAppointment()">${icon('plus')} Nuevo turno</button>
+    </div>
+  </div>
+
+  <div class="grid kpis">
+    <div class="card kpi">
+      <div class="k-top"><span class="k-ico">${icon('calendar')}</span><span class="k-lbl">Turnos de hoy</span></div>
+      <div class="k-val">${todayApts.length}</div>
+      <div class="k-sub">${tomorrow.length} agendados para mañana</div>
+    </div>
+    <div class="card kpi">
+      <div class="k-top"><span class="k-ico">${icon('stetho')}</span><span class="k-lbl">Profesionales en consulta</span></div>
+      <div class="k-val">${inConsult.length}</div>
+      <div class="k-sub">de ${PROS.length} profesionales de la clínica</div>
+    </div>
+    <div class="card kpi">
+      <div class="k-top"><span class="k-ico">${icon('flask')}</span><span class="k-lbl">Estudios sin informar</span></div>
+      <div class="k-val">${studies.length}</div>
+      <div class="k-sub ${studies.length ? '' : 'up'}">${studies.length ? 'Pendientes de firma del profesional' : 'Todo informado'}</div>
+    </div>
+    <div class="card kpi">
+      <div class="k-top"><span class="k-ico">${icon('cash')}</span><span class="k-lbl">Cobros del día</span></div>
+      <div class="k-val">${fmtARS(todayRevenue())}</div>
+      <div class="k-sub">${todayPays.length} movimientos registrados hoy</div>
+    </div>
+  </div>
+
+  <div class="dcols">
+    <div class="card">
+      <div class="card-head">
+        <h3>Agenda de hoy</h3>
+        <span class="hint">${todayApts.length} turnos · ocupación ${occupancy(iso(TODAY))}%</span>
+        <div class="actions"><button class="link-btn" onclick="go('agenda')">Ver agenda completa</button></div>
+      </div>
+      <div>${todayApts.length ? todayApts.slice(0,9).map(aptRow).join('') : '<div class="empty">No hay turnos para hoy.</div>'}</div>
+    </div>
+
+    <div class="stack" style="align-content:start">
+      <div class="card">
+        <div class="card-head"><h3>Avisos</h3><span class="hint">${unreadTotal() + studies.length + 2}</span></div>
+        <button class="alert-row" onclick="go('mensajes')">
+          <span class="a-ico a-blue">${icon('chat','ico-sm')}</span>
+          <span class="a-main"><span class="a-t">${unreadTotal()} mensajes esperan respuesta</span><span class="a-s">Confirmaciones y reprogramaciones de pacientes</span></span>
+        </button>
+        <button class="alert-row" onclick="go('agenda')">
+          <span class="a-ico a-amber">${icon('bell','ico-sm')}</span>
+          <span class="a-main"><span class="a-t">Recordatorios por enviar</span><span class="a-s">${tomorrow.length} turnos de mañana · se avisan ${SETTINGS.reminderHours} h antes</span></span>
+        </button>
+        <button class="alert-row" onclick="go('pacientes')">
+          <span class="a-ico a-teal">${icon('flask','ico-sm')}</span>
+          <span class="a-main"><span class="a-t">${studies.length} estudios pendientes de informar</span><span class="a-s">Resultados listos para avisar al paciente</span></span>
+        </button>
+        <button class="alert-row" onclick="go('pagos')">
+          <span class="a-ico a-red">${icon('wallet','ico-sm')}</span>
+          <span class="a-main"><span class="a-t">${fmtARS(pendingTotal())} por cobrar</span><span class="a-s">${PAYMENTS.filter(p=>p.status==='pendiente'&&parseISO(p.date).getMonth()===TODAY.getMonth()).length} cobros pendientes del mes</span></span>
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Profesionales en consulta</h3><span class="hint">ahora</span></div>
+        <div>${inConsult.length ? inConsult.slice(0,4).map(a => `
+          <button class="row" onclick="openApt('${a.id}')">
+            <span class="avatar" style="background:${specColor(svc(a.service).spec)}22;color:${specColor(svc(a.service).spec)}">${initials(proName(a.pro).replace(/^(Dra?\.|Lic\.|Bioq\.|Téc\.)\s*/,''))}</span>
+            <span class="r-main"><span class="r-t">${esc(proName(a.pro))}</span><span class="r-s">${esc(specName(svc(a.service).spec))} · ${esc(cli(a.client).name)}</span></span>
+            <span class="r-end"><span class="pill pill-blue">${to24(a.time)}–${addMin(a.time, a.dur)}</span></span>
+          </button>`).join('') : '<div class="empty">No hay profesionales en consulta en este momento.</div>'}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dcols-3">
+    <div class="card">
+      <div class="card-head"><h3>Estudios pendientes de informar</h3><span class="hint">${studies.length}</span></div>
+      <div>${studies.slice(0,4).map(e => `
+        <button class="row" onclick="openClient('${e.client}')">
+          <span class="a-ico a-teal" style="width:32px;height:32px;flex:0 0 32px;border-radius:9px">${icon('flask','ico-sm')}</span>
+          <span class="r-main"><span class="r-t">${esc(e.name)}</span><span class="r-s">${esc(cli(e.client).name)} · ${esc(proName(e.pro))}</span></span>
+          <span class="r-end"><span class="pill pill-amber">${fmtShort(parseISO(e.date))}</span></span>
+        </button>`).join('') || '<div class="empty">Sin estudios pendientes.</div>'}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>Pacientes sin volver</h3><span class="hint">más de 2 meses y medio</span></div>
+      <div>${noVol.slice(0,4).map(c => `
+        <button class="row" onclick="openClient('${c.id}')">
+          <span class="avatar">${initials(c.name)}</span>
+          <span class="r-main"><span class="r-t">${esc(c.name)}</span><span class="r-s">${esc(c.obra)} · último turno ${fmtShort(parseISO(lastVisit(c.id).date))}</span></span>
+          <span class="r-end"><span class="pill pill-gray no-dot">${daysSince(c.id)} días</span></span>
+        </button>`).join('') || '<div class="empty">Sin pacientes para recuperar.</div>'}</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-head"><h3>Cobros del día</h3><span class="hint">${todayPays.length} movimientos · ${fmtARS(todayRevenue())} cobrado</span><div class="actions"><button class="link-btn" onclick="go('pagos')">Ver todos los pagos</button></div></div>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Fecha</th><th>Paciente</th><th>Práctica</th><th>Obra social</th><th>Medio</th><th class="num">Monto</th><th>Estado</th></tr></thead>
+      <tbody>${todayPays.slice(0,6).map(p => `<tr>
+        <td class="mini">${fmtShort(parseISO(p.date))}</td>
+        <td><span class="t-name">${esc(cli(p.client).name)}</span></td>
+        <td>${esc(svc(p.service).name)}</td>
+        <td class="mini">${esc(p.obra)}</td>
+        <td class="mini">${p.method}</td>
+        <td class="num">${fmtARS2(p.amount)}</td>
+        <td>${p.status === 'pagado' ? '<span class="pill pill-green">Pagado</span>' : '<span class="pill pill-amber">Pendiente</span>'}</td>
+      </tr>`).join('') || '<tr><td colspan="7"><div class="empty">Todavía no hay cobros registrados hoy.</div></td></tr>'}</tbody>
+    </table></div>
+  </div>`;
+}
+function addMin(t, n){ const m = mins(t) + n; return pad(Math.floor(m/60)) + ':' + pad(m%60); }
+function aptRow(a){
+  const c = cli(a.client), s = svc(a.service);
+  return `<button class="row" onclick="openApt('${a.id}')">
+    <span class="time-box"><span class="h">${a.time}</span><span class="ampm">${a.dur} min</span></span>
+    <span class="avatar">${initials(c.name)}</span>
+    <span class="r-main"><span class="r-t">${esc(c.name)}</span><span class="r-s">${esc(s.name)} · ${esc(specName(s.spec))} · ${esc(proName(a.pro))}</span></span>
+    <span class="r-end">${statusPill(a.status)}</span>
+  </button>`;
+}
+
+/* ============================================================
+   AGENDA
+   ============================================================ */
+function viewAgenda(root){
+  const d = state.agendaDate;
+  const weekStart = startOfWeek(d);
+  const specOpts = '<option value="">Todas las especialidades</option>' + SPECS.map(s => `<option value="${s.id}" ${state.agendaSpec===s.id?'selected':''}>${esc(s.name)}</option>`).join('');
+  const proPool = state.agendaSpec ? prosOf(state.agendaSpec) : PROS;
+  const proOpts = '<option value="">Todos los profesionales</option>' + proPool.map(p => `<option value="${p.id}" ${state.agendaPro===p.id?'selected':''}>${esc(p.name)} — ${esc(specName(p.spec))}</option>`).join('');
+  root.innerHTML = `
+  <div class="page-head">
+    <div><h1>Agenda</h1><div class="sub">Turnos por especialidad y profesional. Vista ${state.agendaMode === 'dia' ? 'de día con carriles por profesional' : 'semanal'}.</div></div>
+    <div class="actions"><button class="btn btn-primary" onclick="newAppointment('${iso(d)}')">${icon('plus')} Nuevo turno</button></div>
+  </div>
+  <div class="agenda-bar">
+    <div class="seg">
+      <button class="${state.agendaMode==='dia'?'on':''}" onclick="setAgendaMode('dia')">Día</button>
+      <button class="${state.agendaMode==='semana'?'on':''}" onclick="setAgendaMode('semana')">Semana</button>
+    </div>
+    <div class="date-nav">
+      <button onclick="shiftAgenda(-1)" aria-label="Anterior">${icon('arrowLeft','ico-sm')}</button>
+      <span class="cur">${state.agendaMode === 'semana'
+        ? weekStart.getDate() + ' ' + MONTHS[weekStart.getMonth()].slice(0,3) + ' – ' + addDays(weekStart,6).getDate() + ' ' + MONTHS[addDays(weekStart,6).getMonth()].slice(0,3)
+        : fmtLong(d)}</span>
+      <button onclick="shiftAgenda(1)" aria-label="Siguiente">${icon('arrowRight','ico-sm')}</button>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="goToday()">Hoy</button>
+    <select class="filter-select" onchange="setAgendaSpec(this.value)" aria-label="Filtrar por especialidad">${specOpts}</select>
+    <select class="filter-select" onchange="setAgendaPro(this.value)" aria-label="Filtrar por profesional">${proOpts}</select>
+  </div>
+  <div class="legend" style="margin-top:0;margin-bottom:12px">
+    <span><i class="dot" style="background:#2E9E6B"></i> Confirmado</span>
+    <span><i class="dot" style="background:#D2A04A"></i> Pendiente</span>
+    <span><i class="dot" style="background:#7FA695"></i> Atendido</span>
+    <span><i class="dot" style="background:#C48D93"></i> Cancelado</span>
+    <span><i class="dot" style="background:#A294C4"></i> No asistió</span>
+  </div>
+  <div id="agendaBody">${state.agendaMode === 'dia' ? dayView(d) : weekView(weekStart)}</div>`;
+}
+function setAgendaMode(m){ state.agendaMode = m; viewAgenda(document.getElementById('view')); }
+function setAgendaSpec(v){ state.agendaSpec = v; state.agendaPro = ''; viewAgenda(document.getElementById('view')); }
+function setAgendaPro(v){ state.agendaPro = v; viewAgenda(document.getElementById('view')); }
+function shiftAgenda(dir){ state.agendaDate = addDays(state.agendaDate, state.agendaMode === 'semana' ? 7*dir : dir); viewAgenda(document.getElementById('view')); }
+function goToday(){ state.agendaDate = new Date(TODAY.getTime()); viewAgenda(document.getElementById('view')); }
+
+function dayLanes(dISO){
+  if(state.agendaPro) return [PROS.find(p => p.id === state.agendaPro)].filter(Boolean);
+  const apts = aptsOn(dISO).filter(a => state.agendaSpec ? svc(a.service).spec === state.agendaSpec : true);
+  const counts = {};
+  apts.forEach(a => counts[a.pro] = (counts[a.pro] || 0) + 1);
+  let lanes = Object.keys(counts).sort((a,b) => counts[b] - counts[a]).map(id => PROS.find(p => p.id === id)).filter(Boolean);
+  if(!lanes.length){
+    const pool = state.agendaSpec ? prosOf(state.agendaSpec) : PROS;
+    lanes = pool.slice(0, 4);
+  }
+  return lanes.slice(0, 4);
+}
+function dayView(d){
+  const dISO = iso(d);
+  const lanes = dayLanes(dISO);
+  const isToday = dISO === iso(TODAY);
+  const hours = []; for(let h = DAY_START + 1; h < DAY_END; h++) hours.push(h);
+  const H = (DAY_END - DAY_START) * (60 / SLOT_MIN) * SLOT_H;
+  const lanesHtml = lanes.map(p => {
+    const apts = aptsOn(dISO).filter(a => a.pro === p.id && (state.agendaSpec ? svc(a.service).spec === state.agendaSpec : true));
+    return `<div class="cal-lane" style="height:${H}px">${apts.map(a => {
+      const s = svc(a.service);
+      const top = Math.max(0, (mins(a.time) - DAY_START*60) / SLOT_MIN * SLOT_H);
+      const hgt = Math.max(SLOT_H - 3, a.dur / SLOT_MIN * SLOT_H - 3);
+      return `<button class="cal-block st-${a.status}${hgt < 41 ? ' compact' : ''}" style="top:${top}px;height:${hgt}px" onclick="openApt('${a.id}')" title="${esc(cli(a.client).name)} · ${esc(s.name)} · ${a.dur} min">
+        <span class="cb-h">${a.time} · ${a.dur}m</span>
+        <span class="cb-n">${esc(cli(a.client).name.split(' ').slice(0,2).join(' '))}</span>
+        <span class="cb-s">${esc(s.name)}</span>
+      </button>`;
+    }).join('')}</div>`;
+  }).join('');
+  const nowTop = (DEMO_NOW - DAY_START*60) / SLOT_MIN * SLOT_H;
+  const aptsTotal = aptsOn(dISO).filter(a => a.status !== 'cancelado' && a.status !== 'ausente' && (state.agendaSpec ? svc(a.service).spec === state.agendaSpec : true));
+  return `<div class="cal-wrap"><div class="cal-scroll"><div class="cal">
+    <div class="cal-head">
+      <div class="cal-corner">Hora</div>
+      ${lanes.map(p => `<div class="cal-lane-h">
+        <b><i class="dot" style="background:${specColor(p.spec)}"></i>${esc(p.name)}</b>
+        <span>${esc(specName(p.spec))} · ${esc(p.room)}</span>
+      </div>`).join('')}
+    </div>
+    <div class="cal-body">
+      <div class="cal-times" style="height:${H}px">${hours.map(h => `<span style="top:${(h-DAY_START)*(60/SLOT_MIN)*SLOT_H}px">${pad(h)}:00</span>`).join('')}</div>
+      ${lanesHtml}
+      ${isToday && nowTop >= 0 && nowTop <= H ? `<div class="cal-now" style="top:${nowTop}px"></div>` : ''}
+    </div>
+  </div></div></div>
+  <div class="legend" style="margin-top:12px">
+    <span><strong style="color:var(--text)">${aptsTotal.length}</strong> turnos · ocupación ${occupancy(dISO)}%</span>
+    <span>Facturación estimada del día: <strong style="color:var(--text)">${fmtARS(aptsTotal.reduce((s,a)=>s+a.price,0))}</strong></span>
+    <span>${lanes.length} carriles visibles</span>
+  </div>`;
+}
+function weekView(weekStart){
+  const days = []; for(let i = 0; i < 7; i++) days.push(addDays(weekStart, i));
+  const filt = a => state.agendaSpec ? svc(a.service).spec === state.agendaSpec : true;
+  return `<div class="cal-scroll"><div class="week-grid" style="min-width:840px">${days.map(d => {
+    const dISO = iso(d);
+    const apts = aptsOn(dISO).filter(filt).filter(a => !state.agendaPro || a.pro === state.agendaPro);
+    const isToday = dISO === iso(TODAY);
+    return `<div class="wcol ${isToday?'today':''}">
+      <div class="wcol-h"><div class="wd">${DAYS_SHORT[d.getDay()]}</div><div class="wn">${d.getDate()}</div></div>
+      <div class="wcol-b">${apts.length ? apts.map(a => `
+        <button class="apt st-${a.status}" onclick="openApt('${a.id}')">
+          <span class="ah">${a.time} · ${a.dur}m</span>
+          <span class="an">${esc(cli(a.client).name.split(' ').slice(0,2).join(' '))}</span>
+          <span class="as">${esc(svc(a.service).name)}</span>
+          <span class="as">${esc(proName(a.pro))}</span>
+        </button>`).join('') : '<div class="wcol-empty">Sin turnos</div>'}
+      </div>
+    </div>`;
+  }).join('')}</div></div>
+  <div class="legend" style="margin-top:14px"><span>Total de la semana: <strong style="color:var(--text)">${days.reduce((n,d) => n + aptsOn(iso(d)).filter(filt).filter(a=>a.status!=='cancelado'&&a.status!=='ausente').length, 0)} turnos</strong>${state.agendaSpec ? ' · ' + esc(specName(state.agendaSpec)) : ''}</span></div>`;
+}
+
+/* --- detalle de turno --- */
+function openApt(id){
+  const a = APPOINTMENTS.find(x => x.id === id);
+  if(!a) return;
+  const c = cli(a.client), s = svc(a.service);
+  const d = parseISO(a.date);
+  openModal(`
+    <div class="modal-h">
+      <div><h3>Detalle del turno</h3><div class="sub">${fmtLong(d)} · ${a.time} a ${addMin(a.time, a.dur)}</div></div>
+      <button class="modal-x" onclick="closeModal()" aria-label="Cerrar">${icon('x')}</button>
+    </div>
+    <div class="modal-b">
+      <div style="display:flex; gap:12px; align-items:center; margin:4px 0 14px">
+        <span class="avatar lg">${initials(c.name)}</span>
+        <div style="flex:1; min-width:0"><div style="font-weight:800; font-size:15px">${esc(c.name)}</div>
+        <div class="mini">DNI ${c.dni} · ${esc(c.phone)} · ${esc(c.obra)}</div></div>
+        ${statusPill(a.status)}
+      </div>
+      <div class="detail-rows">
+        <div class="dr"><span class="k">Paciente</span><span class="v">${esc(c.name)}</span></div>
+        <div class="dr"><span class="k">Práctica</span><span class="v">${esc(s.name)}</span></div>
+        <div class="dr"><span class="k">Especialidad</span><span class="v">${esc(specName(s.spec))}</span></div>
+        <div class="dr"><span class="k">Profesional</span><span class="v">${esc(proName(a.pro))} · ${esc((PROS.find(p=>p.id===a.pro)||{}).room || '')}</span></div>
+        <div class="dr"><span class="k">Duración</span><span class="v">${a.dur} minutos</span></div>
+        <div class="dr"><span class="k">Obra social</span><span class="v">${esc(c.obra)}${c.plan !== 'Sin plan' ? ' · ' + esc(c.plan) : ''}</span></div>
+        <div class="dr"><span class="k">Valor</span><span class="v">${fmtARS2(a.price)}</span></div>
+        <div class="dr"><span class="k">Recordatorio</span><span class="v">${SETTINGS.reminderOn ? 'Automático ' + SETTINGS.reminderHours + ' h antes' : 'Desactivado'}</span></div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" onclick="closeModal();openClient('${c.id}')">${icon('clipboard','ico-sm')} Ver ficha</button>
+        <button class="btn btn-ghost btn-sm" onclick="closeModal();goThreadFor('${c.id}')">${icon('chat','ico-sm')} Mensajes</button>
+        ${a.status === 'pendiente' ? `<button class="btn btn-soft btn-sm" onclick="setAptStatus('${a.id}','confirmado')">${icon('check','ico-sm')} Confirmar</button>` : ''}
+        ${a.status === 'confirmado' ? `<button class="btn btn-soft btn-sm" onclick="setAptStatus('${a.id}','atendido')">${icon('check','ico-sm')} Marcar atendido</button>` : ''}
+        ${a.status === 'confirmado' || a.status === 'pendiente' ? `<button class="btn btn-ghost btn-sm" onclick="setAptStatus('${a.id}','ausente')" style="color:var(--violet)">${icon('warn','ico-sm')} No asistió</button>` : ''}
+        ${a.status !== 'cancelado' && a.status !== 'atendido' ? `<button class="btn btn-ghost btn-sm" onclick="setAptStatus('${a.id}','cancelado')" style="color:var(--red)">${icon('x','ico-sm')} Cancelar</button>` : ''}
+      </div>
+      <p class="mini" style="margin-top:12px">En el sistema real, aquí también se registra el cobro, la orden de la obra social y la nota clínica del profesional.</p>
+    </div>
+    <div class="modal-f"><button class="btn btn-ghost" onclick="closeModal()">Cerrar</button></div>`);
+}
+function setAptStatus(id, st){
+  const a = APPOINTMENTS.find(x => x.id === id);
+  if(!a) return;
+  a.status = st;
+  if(st === 'atendido' && !PAYMENTS.some(p => p.client === a.client && p.date === a.date && p.service === a.service)){
+    const c = cli(a.client);
+    PAYMENTS.unshift({id:'y'+(_payId++), client:a.client, service:a.service, date:a.date, amount:a.price, method:'Efectivo', status:'pagado', pro:a.pro, obra:c.obra});
+  }
+  closeModal();
+  toast(st === 'atendido' ? 'Turno marcado como atendido y cobro registrado.' : 'Turno marcado como ' + STATUS_LABEL[st].toLowerCase() + '.');
+  renderNav();
+  go(state.section === 'ficha' ? 'ficha' : state.section);
+}
+
+/* --- nuevo turno --- */
+function newAppointment(dateISO){
+  const dISO = dateISO || iso(state.section === 'agenda' ? state.agendaDate : TODAY);
+  const specOpts = SPECS.map(s => `<optgroup label="${esc(s.name)}">${svcsOf(s.id).map(x => `<option value="${x.id}" data-dur="${x.dur}" data-price="${x.price}" data-spec="${s.id}">${esc(x.name)} · ${fmtARS(x.price)}</option>`).join('')}</optgroup>`).join('');
+  openModal(`
+    <div class="modal-h">
+      <div><h3>Nuevo turno</h3><div class="sub">Se agrega a la agenda al instante (demostración).</div></div>
+      <button class="modal-x" onclick="closeModal()" aria-label="Cerrar">${icon('x')}</button>
+    </div>
+    <div class="modal-b">
+      <div class="form-grid">
+        <div class="field full">
+          <label for="f-client">Paciente</label>
+          <select class="select" id="f-client" onchange="onClientSelect()">
+            <option value="">Seleccione un paciente</option>
+            ${PATIENTS.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c => `<option value="${c.id}">${esc(c.name)} · DNI ${c.dni} · ${esc(c.obra)}</option>`).join('')}
+            <option value="__new">+ Paciente nuevo</option>
+          </select>
+        </div>
+        <div class="field full hidden" id="newClientFields">
+          <div class="form-grid">
+            <div class="field" style="margin:0"><label for="f-newname">Nombre completo</label><input class="input" id="f-newname" placeholder="Ej. Ana María Vélez"></div>
+            <div class="field" style="margin:0"><label for="f-newphone">Teléfono</label><input class="input" id="f-newphone" placeholder="+54 264 4XX-XXXX"></div>
+            <div class="field" style="margin:0"><label for="f-newobra">Obra social</label><select class="select" id="f-newobra">${OBRAS.map(o=>`<option>${o.n}</option>`).join('')}</select></div>
+            <div class="field" style="margin:0"><label for="f-newdni">DNI</label><input class="input" id="f-newdni" placeholder="Sin datos"></div>
+          </div>
+        </div>
+        <div class="field full">
+          <label for="f-service">Práctica o servicio</label>
+          <select class="select" id="f-service" onchange="onServiceSelect()">${specOpts}</select>
+        </div>
+        <div class="field">
+          <label for="f-pro">Profesional</label>
+          <select class="select" id="f-pro"></select>
+        </div>
+        <div class="field">
+          <label for="f-date">Día</label>
+          <input class="input" type="date" id="f-date" value="${dISO}">
+        </div>
+        <div class="field">
+          <label for="f-time">Hora</label>
+          <select class="select" id="f-time">${SLOTS.map(t => `<option value="${t}" ${t==='10:00'?'selected':''}>${t}</option>`).join('')}</select>
+        </div>
+        <div class="field">
+          <label for="f-dur">Duración (min)</label>
+          <input class="input" type="number" id="f-dur" min="10" step="5" value="30">
+        </div>
+        <div class="field">
+          <label for="f-price">Valor (pesos)</label>
+          <input class="input" type="number" id="f-price" min="0" step="500" value="18000">
+        </div>
+      </div>
+      <p class="mini" style="margin:6px 0 2px">${icon('warn','ico-sm')} En esta demostración el turno solo existe en la pantalla.</p>
+    </div>
+    <div class="modal-f">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveAppointment()">${icon('check')} Agendar turno</button>
+    </div>`);
+  onServiceSelect();
+}
+function onClientSelect(){
+  const v = document.getElementById('f-client').value;
+  document.getElementById('newClientFields').classList.toggle('hidden', v !== '__new');
+}
+function onServiceSelect(){
+  const sel = document.getElementById('f-service');
+  const opt = sel.selectedOptions[0];
+  if(!opt) return;
+  const s = svc(sel.value);
+  document.getElementById('f-dur').value = s.dur;
+  document.getElementById('f-price').value = s.price;
+  const proSel = document.getElementById('f-pro');
+  proSel.innerHTML = prosOf(s.spec).map(p => `<option value="${p.id}" ${p.id===s.pro?'selected':''}>${esc(p.name)} · ${esc(p.room)}</option>`).join('');
+}
+function saveAppointment(){
+  let clientId = document.getElementById('f-client').value;
+  const serviceId = document.getElementById('f-service').value;
+  const pro = document.getElementById('f-pro').value;
+  const date = document.getElementById('f-date').value;
+  const time = document.getElementById('f-time').value;
+  const dur = parseInt(document.getElementById('f-dur').value, 10) || svc(serviceId).dur;
+  let price = parseFloat(document.getElementById('f-price').value);
+  if(isNaN(price)) price = svc(serviceId).price;
+  if(!date){ toast('Falta elegir el día del turno.'); return; }
+  if(!pro){ toast('Falta elegir el profesional.'); return; }
+  if(clientId === '__new'){
+    const name = (document.getElementById('f-newname').value || '').trim();
+    const phone = (document.getElementById('f-newphone').value || '').trim();
+    if(name.length < 3){ toast('Escriba el nombre del paciente nuevo.'); return; }
+    const id = 'c' + (PATIENTS.length + 1);
+    PATIENTS.push({id, name, dni:'Sin datos', phone: phone || 'Sin teléfono', email:'sin correo', since: String(TODAY.getFullYear()),
+      born:'—', address:'San Juan', obra: document.getElementById('f-newobra').value || 'Particular', plan:'Sin plan',
+      whatsapp: !!phone, notes:[]});
+    clientId = id;
+  }
+  if(!clientId){ toast('Falta elegir el paciente.'); return; }
+  const clash = APPOINTMENTS.find(a => a.date === date && a.pro === pro && a.status !== 'cancelado'
+    && (mins(time) < mins(a.time) + a.dur && mins(a.time) < mins(time) + dur));
+  APPOINTMENTS.push({id:'a'+(_aptId++), client:clientId, service:serviceId, pro, date, time, dur, price, status:'confirmado'});
+  APPOINTMENTS.sort((a,b) => (a.date + a.time).localeCompare(b.date + b.time));
+  closeModal();
+  toast(clash ? 'Turno agendado. Atención: se superpone con otro turno de ' + proName(pro) + '.' : 'Turno agendado para ' + fmtLong(parseISO(date)) + ' a las ' + time + '.');
+  renderNav();
+  if(state.section === 'agenda'){
+    if(state.agendaMode === 'dia' && iso(state.agendaDate) !== date) state.agendaDate = parseISO(date);
+    if(clash) state.agendaPro = pro;
+    viewAgenda(document.getElementById('view'));
+  } else if(state.section === 'escritorio'){ viewEscritorio(document.getElementById('view')); }
+  else if(state.section === 'ficha'){ viewFicha(document.getElementById('view')); }
+  else { go('agenda'); }
+}
+
+/* ============================================================
+   PACIENTES
+   ============================================================ */
+function viewPacientes(root){
+  root.innerHTML = `
+  <div class="page-head">
+    <div><h1>Pacientes</h1><div class="sub">${PATIENTS.length} pacientes registrados · contacto, obra social, historial, estudios y recetas en un solo lugar.</div></div>
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="go('mensajes')">${icon('chat')} Mensajes</button>
+      <button class="btn btn-primary" onclick="newAppointment()">${icon('plus')} Nuevo turno</button>
+    </div>
+  </div>
+  <div class="grid kpis stats-3" style="margin-bottom:16px">
+    <div class="card kpi"><div class="k-top"><span class="k-ico">${icon('users')}</span><span class="k-lbl">Pacientes activos</span></div><div class="k-val">${PATIENTS.length}</div><div class="k-sub">${PATIENTS.filter(c=>ensureVisits(c.id).length>1).length} con más de una consulta</div></div>
+    <div class="card kpi"><div class="k-top"><span class="k-ico">${icon('shield')}</span><span class="k-lbl">Con obra social</span></div><div class="k-val">${PATIENTS.filter(c=>c.obra!=='Particular').length}</div><div class="k-sub">${PATIENTS.filter(c=>c.obra==='Particular').length} particulares</div></div>
+    <div class="card kpi"><div class="k-top"><span class="k-ico">${icon('flask')}</span><span class="k-lbl">Estudios sin informar</span></div><div class="k-val">${pendingStudies().length}</div><div class="k-sub">de pacientes con resultado pendiente</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head">
+      <div class="search-wrap">${icon('search')}<input class="input" id="clientSearch" placeholder="Buscar por nombre, DNI, teléfono u obra social…" oninput="state.clientQ=this.value;renderClientList()" value="${esc(state.clientQ)}"></div>
+      <div class="actions"><span class="hint" id="clientCount"></span></div>
+    </div>
+    <div id="clientList"></div>
+  </div>`;
+  renderClientList();
+}
+function renderClientList(){
+  const q = (state.clientQ || '').toLowerCase().trim();
+  const list = PATIENTS.filter(c => !q || c.name.toLowerCase().includes(q) || c.dni.includes(q) || c.phone.includes(q) || c.obra.toLowerCase().includes(q));
+  const el = document.getElementById('clientList');
+  if(!el) return;
+  document.getElementById('clientCount').textContent = list.length + ' de ' + PATIENTS.length;
+  el.innerHTML = list.length ? list.map(c => {
+    const v = ensureVisits(c.id);
+    const st = studiesOf(c.id).filter(s => s.status === 'pendiente').length;
+    return `<button class="client-row" onclick="openClient('${c.id}')">
+      <span class="avatar">${initials(c.name)}</span>
+      <span class="r-main"><span class="r-t">${esc(c.name)}</span><span class="r-s">DNI ${c.dni} · ${esc(c.obra)} · ${esc(c.phone)}</span></span>
+      <span class="cr-meta">
+        <span><b>${v.length}</b> consultas</span>
+        <span>últ. <b>${v[0] ? fmtShort(parseISO(v[0].date)) : '—'}</b></span>
+      </span>
+      ${st ? `<span class="pill pill-amber">${st} estudio${st>1?'s':''}</span>` : `<span class="pill pill-gray no-dot">Al día</span>`}
+      ${icon('arrowRight','ico-sm')}
+    </button>`;
+  }).join('') : '<div class="empty">No se encontraron pacientes con ese criterio.</div>';
+}
+function openClient(id){
+  state.clientId = id;
+  state.section = 'ficha';
+  document.getElementById('tbTitle').textContent = 'Ficha del paciente';
+  renderNav();
+  viewFicha(document.getElementById('view'));
+  toggleSide(false);
+  window.scrollTo(0,0);
+}
+function age(c){ if(!c.born || !/^\d{4}$/.test(c.born)) return null; return TODAY.getFullYear() - Number(c.born); }
+function viewFicha(root){
+  const c = cli(state.clientId);
+  if(!c){ go('pacientes'); return; }
+  const v = ensureVisits(c.id);
+  const studies = studiesOf(c.id);
+  const rx = rxOf(c.id);
+  const upcoming = APPOINTMENTS.filter(a => a.client === c.id && a.date >= iso(TODAY) && a.status !== 'cancelado' && a.status !== 'atendido'
+      && (a.date > iso(TODAY) || mins(a.time) >= DEMO_NOW))
+    .sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time));
+  // historial de consultas por especialidad
+  const bySpec = {};
+  v.forEach(x => { const sp = svc(x.service).spec; (bySpec[sp] = bySpec[sp] || []).push(x); });
+  const specOrder = Object.keys(bySpec).sort((a,b) => bySpec[b].length - bySpec[a].length);
+  const totalFact = v.reduce((s,x) => s + x.price, 0);
+  const edad = age(c);
+  root.innerHTML = `
+  <button class="link-btn" onclick="go('pacientes')" style="display:inline-flex;align-items:center;gap:6px;margin-bottom:14px">${icon('arrowLeft','ico-sm')} Volver a pacientes</button>
+  <div class="card card-pad" style="margin-bottom:16px">
+    <div class="ficha-head">
+      <span class="avatar lg">${initials(c.name)}</span>
+      <div class="fh-main">
+        <h2>${esc(c.name)}</h2>
+        <div class="fh-sub">DNI ${c.dni}${edad ? ' · ' + edad + ' años' : ''} · ${esc(c.obra)}${c.plan !== 'Sin plan' ? ' (' + esc(c.plan) + ')' : ''} · paciente desde ${c.since}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+          <span class="tag">${v.length} consultas</span>
+          <span class="tag">${studies.length} estudios</span>
+          <span class="tag">${rx.length} recetas</span>
+          ${c.notes.length ? '<span class="tag" style="background:#FFF8E8;border-color:#F0DDB4;color:#7A5A16">Con observaciones</span>' : ''}
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-ghost" onclick="goThreadFor('${c.id}')">${icon('chat')} Mensajes</button>
+        <button class="btn btn-primary" onclick="newAppointment('${iso(TODAY)}')">${icon('plus')} Agendar</button>
+      </div>
+    </div>
+  </div>
+  <div class="ficha-grid">
+    <div class="stack">
+      ${upcoming.length ? `<div class="card">
+        <div class="card-head"><h3>Próximos turnos</h3><span class="hint">${upcoming.length}</span></div>
+        <div>${upcoming.map(a => `<button class="row" onclick="openApt('${a.id}')">
+          <span class="time-box"><span class="h">${parseISO(a.date).getDate()}</span><span class="ampm">${MONTHS[parseISO(a.date).getMonth()].slice(0,3)}</span></span>
+          <span class="r-main"><span class="r-t">${esc(svc(a.service).name)}</span><span class="r-s">${fmtLong(parseISO(a.date))} · ${a.time} · ${esc(proName(a.pro))}</span></span>
+          <span class="r-end">${statusPill(a.status)}</span>
+        </button>`).join('')}</div>
+      </div>` : ''}
+
+      <div class="card">
+        <div class="card-head"><h3>Historial de consultas por especialidad</h3><span class="hint">${v.length} registros</span></div>
+        <div class="card-pad">
+          ${specOrder.map(sp => `
+            <div class="spec-block">
+              <div class="spec-block-h"><i class="dot" style="background:${specColor(sp)}"></i>${esc(specName(sp))}<span class="hint" style="margin-left:auto">${bySpec[sp].length} consultas</span></div>
+              <div class="table-wrap"><table class="t">
+                <thead><tr><th>Fecha</th><th>Práctica</th><th>Profesional</th><th class="num">Valor</th></tr></thead>
+                <tbody>${bySpec[sp].slice(0,6).map(x => `<tr>
+                  <td class="mini">${fmtShort(parseISO(x.date))}</td>
+                  <td>${esc(svc(x.service).name)}</td>
+                  <td class="mini">${esc(proName(x.pro))}</td>
+                  <td class="num">${fmtARS2(x.price)}</td>
+                </tr>`).join('')}</tbody>
+              </table></div>
+            </div>`).join('') || '<p class="mini">Sin consultas registradas.</p>'}
+          <p class="mini" style="margin-top:10px">Total facturado al paciente: <strong style="color:var(--text)">${fmtARS(totalFact)}</strong></p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Estudios y resultados</h3><span class="hint">${studies.length}</span></div>
+        <div class="card-pad">
+          ${studies.slice(0,8).map(e => `<div class="study-item">
+            <div class="study-top">
+              <span class="sn">${esc(e.name)}</span>
+              ${e.status === 'pendiente' ? '<span class="pill pill-amber">Pendiente de informar</span>' : '<span class="pill pill-green">Informado</span>'}
+            </div>
+            <div class="minor" style="font-size:11px;color:var(--muted)">${fmtShort(parseISO(e.date))} · ${esc(proName(e.pro))} · ${esc(specName(STUDY_SPEC[e.name] || svc(e.service||'s23').spec))}</div>
+          </div>`).join('') || '<p class="mini">Sin estudios registrados.</p>'}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Recetas</h3><span class="hint">${rx.length}</span></div>
+        <div class="card-pad">
+          ${rx.slice(0,6).map(r => `<div class="rx">
+            <b>${esc(r.med)}</b>
+            ${esc(r.ind)}
+            <div class="mini" style="margin-top:3px">${fmtShort(parseISO(r.date))} · ${esc(proName(r.pro))} · ${esc(specName(r.spec))}</div>
+          </div>`).join('') || '<p class="mini">Sin recetas emitidas.</p>'}
+        </div>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="card">
+        <div class="card-head"><h3>Contacto y cobertura</h3></div>
+        <div class="card-pad info-list">
+          <div class="il">${icon('phone')}<span><span class="lbl">Teléfono / WhatsApp</span>${esc(c.phone)} ${c.whatsapp ? '<span class="pill pill-green no-dot" style="margin-left:4px">WhatsApp</span>' : '<span class="pill pill-gray no-dot" style="margin-left:4px">Sin WhatsApp</span>'}</span></div>
+          <div class="il">${icon('mail')}<span><span class="lbl">Correo</span>${esc(c.email)}</span></div>
+          <div class="il">${icon('pin')}<span><span class="lbl">Domicilio</span>${esc(c.address)}, San Juan</span></div>
+          <div class="il">${icon('shield')}<span><span class="lbl">Obra social</span>${esc(c.obra)}${c.plan !== 'Sin plan' ? ' · ' + esc(c.plan) : ''}</span></div>
+          <div class="il">${icon('stetho')}<span><span class="lbl">Última consulta</span>${v[0] ? fmtLong(parseISO(v[0].date)) : 'Sin registros'} (hace ${daysSince(c.id)} días)</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Observaciones</h3><button class="link-btn" onclick="toast('Demo: la observación no se guarda.')">${icon('plus','ico-sm')} Agregar</button></div>
+        <div class="card-pad">
+          ${c.notes.length ? c.notes.map(n => `<div class="note">${esc(n)}</div>`).join('') : '<p class="mini">Sin observaciones. Aquí se registran alergias, antecedentes y preferencias de cada paciente.</p>'}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+function goThreadFor(clientId){
+  const t = THREADS.find(x => x.client === clientId);
+  if(t){ state.threadId = t.id; go('mensajes'); return; }
+  toast('Este paciente no tiene conversación abierta en la demo.');
+  go('mensajes');
+}
+
+/* ============================================================
+   MENSAJES
+   ============================================================ */
+function viewMensajes(root){
+  root.innerHTML = `
+  <div class="page-head">
+    <div><h1>Mensajes</h1><div class="sub">Recordatorios automáticos, confirmaciones y avisos de resultados por WhatsApp.</div></div>
+    <div class="actions"><span class="chip-date">${icon('bell','ico-sm')} Recordatorio ${SETTINGS.reminderOn ? SETTINGS.reminderHours + ' h antes' : 'desactivado'}</span></div>
+  </div>
+  <div class="msg-shell ${state.showChat ? 'show-chat' : ''}" id="msgShell">
+    <div class="msg-list">
+      <div class="msg-list-h"><h3>Conversaciones</h3><p>${THREADS.length} chats · ${unreadTotal()} sin leer</p></div>
+      <div class="msg-items">${THREADS.map(t => {
+        const c = cli(t.client);
+        const last = t.msgs[t.msgs.length - 1];
+        return `<button class="msg-item ${t.id === state.threadId ? 'on' : ''}" onclick="openThread('${t.id}')">
+          <span class="avatar">${initials(c.name)}</span>
+          <span class="m-main">
+            <span class="m-top"><span class="m-n">${esc(c.name)}</span><span class="m-t">${esc(last.t || '')}</span></span>
+            <span class="m-p">${last.from === 'out' ? 'Usted: ' : ''}${esc(last.text.slice(0, 56))}${last.text.length > 56 ? '…' : ''}</span>
+          </span>
+          ${t.unread ? `<span class="m-badge">${t.unread}</span>` : ''}
+        </button>`;
+      }).join('')}</div>
+    </div>
+    <div class="msg-pane" id="msgPane"></div>
+  </div>`;
+  renderThread();
+}
+function openThread(id){
+  state.threadId = id;
+  const t = THREADS.find(x => x.id === id);
+  if(t) t.unread = 0;
+  state.showChat = true;
+  renderNav();
+  viewMensajes(document.getElementById('view'));
+}
+function renderThread(){
+  const pane = document.getElementById('msgPane');
+  if(!pane) return;
+  const t = THREADS.find(x => x.id === state.threadId) || THREADS[0];
+  state.threadId = t.id;
+  const c = cli(t.client);
+  const upcoming = APPOINTMENTS.filter(a => a.client === c.id && a.date >= iso(TODAY) && a.status !== 'cancelado');
+  pane.innerHTML = `
+  <div class="msg-pane-h">
+    <button class="msg-back" onclick="state.showChat=false;document.getElementById('msgShell').classList.remove('show-chat')" aria-label="Volver">${icon('arrowLeft')}</button>
+    <span class="avatar">${initials(c.name)}</span>
+    <div class="m-main"><div class="m-n">${esc(c.name)}</div><div class="m-s">${icon('phone','ico-sm')} ${esc(c.phone)} · ${esc(c.obra)}</div></div>
+    <button class="btn btn-ghost btn-sm" onclick="openClient('${c.id}')">${icon('clipboard','ico-sm')} Ficha</button>
+  </div>
+  <div class="chat">
+    <div class="auto-note">${icon('bell','ico-sm')} Recordatorio automático configurado a ${SETTINGS.reminderHours} h antes del turno. Las confirmaciones y los avisos de resultados quedan registrados aquí.</div>
+    ${c.notes.length ? `<div class="auto-note" style="background:#F4FBFA;border-color:#CBE7E6;color:#0B7372">${esc(c.notes[0])}</div>` : ''}
+    ${t.msgs.map(m => `<div class="bubble ${m.from === 'in' ? 'in' : 'out'}">
+      ${m.from === 'out' ? `<div class="sender">${m.auto ? 'Mensaje automático' : 'Clínica Güemes'}</div>` : ''}
+      ${esc(m.text)}
+      <div class="bt">${esc(m.t || '')}</div>
+    </div>`).join('')}
+    ${upcoming.length ? `<div class="auto-note">${icon('calendar','ico-sm')} Próximo turno: ${esc(svc(upcoming[0].service).name)} el ${fmtLong(parseISO(upcoming[0].date)).toLowerCase()} a las ${upcoming[0].time} con ${esc(proName(upcoming[0].pro))}.</div>` : ''}
+  </div>
+  <div class="chat-input">
+    <input class="input" id="chatText" placeholder="Escriba un mensaje…" onkeydown="if(event.key==='Enter') sendChat()">
+    <button class="btn btn-primary" onclick="sendChat()" aria-label="Enviar">${icon('send')}</button>
+  </div>
+  <div class="chat-note">Demostración: los mensajes no se envían a ninguna parte.</div>`;
+  const chat = pane.querySelector('.chat');
+  chat.scrollTop = chat.scrollHeight;
+}
+function sendChat(){
+  const el = document.getElementById('chatText');
+  const txt = (el.value || '').trim();
+  if(!txt) return;
+  const t = THREADS.find(x => x.id === state.threadId);
+  const now = new Date();
+  t.msgs.push({from:'out', text:txt, t:'Hoy ' + pad(now.getHours()) + ':' + pad(now.getMinutes())});
+  renderThread();
+  toast('Demo: el mensaje se muestra en el chat, pero no se envía.');
+}
+
+/* ============================================================
+   PAGOS
+   ============================================================ */
+function viewPagos(root){
+  const month = PAYMENTS.filter(p => parseISO(p.date).getMonth() === TODAY.getMonth() && parseISO(p.date).getFullYear() === TODAY.getFullYear());
+  const paid = month.filter(p => p.status === 'pagado');
+  const pending = month.filter(p => p.status === 'pendiente');
+  const total = paid.reduce((s,p) => s + p.amount, 0);
+  const ticket = paid.length ? total / paid.length : 0;
+  const byMethod = METHODS.map(m => ({m, v: paid.filter(p => p.method === m).reduce((s,p) => s + p.amount, 0)}));
+  const maxM = Math.max(...byMethod.map(x => x.v), 1);
+  const byObra = {};
+  paid.forEach(p => byObra[p.obra] = (byObra[p.obra] || 0) + p.amount);
+  const obraRows = Object.entries(byObra).sort((a,b) => b[1]-a[1]).slice(0,6);
+  const maxO = Math.max(...obraRows.map(x => x[1]), 1);
+
+  root.innerHTML = `
+  <div class="page-head">
+    <div><h1>Pagos</h1><div class="sub">Cobros de ${MONTHS[TODAY.getMonth()]} ${TODAY.getFullYear()} · ${month.length} movimientos</div></div>
+    <div class="actions"><button class="btn btn-ghost" onclick="toast('Demo: el cierre de caja se genera en el sistema real.')">${icon('file')} Cierre de caja</button><button class="btn btn-primary" onclick="newAppointment()">${icon('plus')} Nuevo turno</button></div>
+  </div>
+  <div class="grid kpis">
+    <div class="card kpi"><div class="k-top"><span class="k-ico">${icon('cash')}</span><span class="k-lbl">Cobrado en el mes</span></div><div class="k-val">${fmtARS(total)}</div><div class="k-sub">${paid.length} cobros registrados</div></div>
+    <div class="card kpi"><div class="k-top"><span class="k-ico">${icon('wallet')}</span><span class="k-lbl">Por cobrar</span></div><div class="k-val">${fmtARS(pending.reduce((s,p)=>s+p.amount,0))}</div><div class="k-sub">${pending.length} cobros pendientes</div></div>
+    <div class="card kpi"><div class="k-top"><span class="k-ico">${icon('chart')}</span><span class="k-lbl">Ticket promedio</span></div><div class="k-val">${fmtARS(ticket)}</div><div class="k-sub">por práctica cobrada</div></div>
+    <div class="card kpi"><div class="k-top"><span class="k-ico">${icon('calendar')}</span><span class="k-lbl">Cobrado hoy</span></div><div class="k-val">${fmtARS(todayRevenue())}</div><div class="k-sub">${PAYMENTS.filter(p=>p.date===iso(TODAY)&&p.status==='pagado').length} cobros de hoy</div></div>
+  </div>
+
+  <div class="dcols" style="margin-bottom:16px">
+    <div class="card" style="min-width:0">
+      <div class="card-head"><h3>Movimientos del mes</h3><span class="hint">${month.length} registros</span></div>
+      <div class="table-wrap"><table class="t">
+        <thead><tr><th>Fecha</th><th>Paciente</th><th>Práctica</th><th>Medio</th><th class="num">Monto</th><th>Estado</th></tr></thead>
+        <tbody>${month.slice(0, 20).map(p => `<tr>
+          <td class="mini">${fmtShort(parseISO(p.date))}</td>
+          <td><button onclick="openClient('${p.client}')" style="font-weight:600">${esc(cli(p.client).name)}</button><div class="mini">${esc(p.obra)} · ${esc(proName(p.pro))}</div></td>
+          <td>${esc(svc(p.service).name)}</td>
+          <td class="mini">${p.method}</td>
+          <td class="num">${fmtARS2(p.amount)}</td>
+          <td>${p.status === 'pagado' ? '<span class="pill pill-green">Pagado</span>' : `<button class="pill pill-amber" onclick="markPaid('${p.id}')" title="Marcar como pagado">Pendiente</button>`}</td>
+        </tr>`).join('')}</tbody>
+      </table></div>
+      <div class="card-pad mini" style="border-top:1px solid var(--line-2)">Se muestran los 20 movimientos más recientes. Los pendientes se pueden marcar como pagados con un clic.</div>
+    </div>
+
+    <div class="stack" style="align-content:start">
+      <div class="card">
+        <div class="card-head"><h3>Cómo pagan</h3><span class="hint">${MONTHS[TODAY.getMonth()]}</span></div>
+        <div class="card-pad">
+          ${byMethod.map(x => `<div class="hbar">
+            <div class="hbar-top"><span class="n">${x.m}</span><span class="v">${fmtARS(x.v)}</span></div>
+            <div class="hbar-track"><div class="hbar-fill" style="width:${Math.round(x.v/maxM*100)}%"></div></div>
+          </div>`).join('')}
+          <p class="mini">El efectivo sigue siendo el medio más usado; la transferencia crece con los estudios.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Por obra social</h3><span class="hint">cobrado</span></div>
+        <div class="card-pad">
+          ${obraRows.map(x => `<div class="hbar">
+            <div class="hbar-top"><span class="n">${esc(x[0])}</span><span class="v">${fmtARS(x[1])}</span></div>
+            <div class="hbar-track"><div class="hbar-fill" style="width:${Math.round(x[1]/maxO*100)}%"></div></div>
+          </div>`).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Resumen</h3></div>
+        <div class="card-pad">
+          <div class="detail-rows" style="margin:0">
+            <div class="dr"><span class="k">Cobrado</span><span class="v">${fmtARS2(total)}</span></div>
+            <div class="dr"><span class="k">Pendiente</span><span class="v">${fmtARS2(pending.reduce((s,p)=>s+p.amount,0))}</span></div>
+            <div class="dr"><span class="k">Facturado</span><span class="v">${fmtARS2(total + pending.reduce((s,p)=>s+p.amount,0))}</span></div>
+            <div class="dr"><span class="k">Cobros hoy</span><span class="v">${fmtARS2(todayRevenue())}</span></div>
+          </div>
+          <p class="mini" style="margin-top:10px">El cierre de caja del día se descarga en PDF en el sistema real, con el detalle por obra social.</p>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+function markPaid(id){
+  const p = PAYMENTS.find(x => x.id === id);
+  if(!p) return;
+  p.status = 'pagado';
+  toast('Cobro registrado: ' + fmtARS2(p.amount) + ' de ' + cli(p.client).name + '.');
+  go('pagos');
+}
+
+/* ============================================================
+   INFORMES
+   ============================================================ */
+function monthSeries(){
+  const base = paidMonth() || 3000000;
+  const out = [];
+  for(let i = 5; i >= 0; i--){
+    const d = new Date(TODAY.getFullYear(), TODAY.getMonth() - i, 1);
+    let v;
+    if(i === 0) v = base;
+    else { const f = 0.6 + (5 - i) * 0.078; v = Math.round(base * f / 10000) * 10000 + ((i * 733) % 9000); }
+    out.push({l: MONTHS[d.getMonth()].slice(0,3), v});
+  }
+  return out;
+}
+function topSpecs(n){
+  const counts = {};
+  APPOINTMENTS.filter(a => parseISO(a.date).getMonth() === TODAY.getMonth() && a.status !== 'cancelado')
+    .forEach(a => { const sp = svc(a.service).spec; counts[sp] = (counts[sp] || 0) + 1; });
+  return Object.entries(counts).map(([id, count]) => ({id, count, name: specName(id)}))
+    .sort((a,b) => b.count - a.count).slice(0, n || 99);
+}
+function viewInformes(root){
+  const weeks = [];
+  for(let i = 3; i >= 0; i--){
+    const start = addDays(startOfWeek(TODAY), -7*i);
+    const end = addDays(start, 6);
+    const apts = aptsRange(iso(start), iso(end)).filter(a => a.status !== 'cancelado');
+    weeks.push({l: i === 0 ? 'Esta sem.' : start.getDate() + ' ' + MONTHS[start.getMonth()].slice(0,3), v: apts.length});
+  }
+  const maxW = Math.max(...weeks.map(w => w.v), 1);
+  const top = topSpecs(9);
+  const maxTop = Math.max(...top.map(t => t.count), 1);
+  const ms = monthSeries();
+  const maxM = Math.max(...ms.map(m => m.v), 1);
+  const all = APPOINTMENTS.filter(a => a.date >= iso(addDays(TODAY,-30)) && a.date <= iso(addDays(TODAY,30)));
+  const counts = {confirmado:0, pendiente:0, atendido:0, cancelado:0, ausente:0};
+  all.forEach(a => counts[a.status] = (counts[a.status]||0) + 1);
+  const totalA = Object.values(counts).reduce((s,n) => s+n, 0) || 1;
+  const segs = [
+    {l:'Atendidos', c:'#2E9E6B', n:counts.atendido},
+    {l:'Confirmados', c:'#2E7FA3', n:counts.confirmado},
+    {l:'Pendientes', c:'#D2A04A', n:counts.pendiente},
+    {l:'Cancelados', c:'#C48D93', n:counts.cancelado},
+    {l:'No asistió', c:'#A294C4', n:counts.ausente}
+  ];
+  const R = 62, C = 2 * Math.PI * R;
+  const ausentismo = Math.round(counts.ausente / totalA * 100);
+  const confirmados = Math.round((counts.confirmado + counts.atendido) / totalA * 100);
+  const cancelados = Math.round(counts.cancelado / totalA * 100);
+
+  root.innerHTML = `
+  <div class="page-head">
+    <div><h1>Informes</h1><div class="sub">Cómo trabaja la clínica: demanda, especialidades, ingresos y ausentismo. Datos de ejemplo.</div></div>
+    <div class="actions"><span class="chip-date">${icon('calendar','ico-sm')} Últimos 30 días + próximos 30</span></div>
+  </div>
+
+  <div class="grid kpis">
+    <div class="card kpi"><div class="k-top"><span class="k-ico">${icon('calendar')}</span><span class="k-lbl">Turnos este mes</span></div><div class="k-val">${APPOINTMENTS.filter(a=>parseISO(a.date).getMonth()===TODAY.getMonth()&&a.status!=='cancelado').length}</div><div class="k-sub"><span class="trend">${icon('up','ico-sm')} 9%</span> vs. mes anterior</div></div>
+    <div class="card kpi"><div class="k-top"><span class="k-ico">${icon('cash')}</span><span class="k-lbl">Ingresos del mes</span></div><div class="k-val">${fmtARS(paidMonth())}</div><div class="k-sub">cobrado y por cobrar</div></div>
+    <div class="card kpi"><div class="k-top"><span class="k-ico">${icon('warn')}</span><span class="k-lbl">Ausentismo</span></div><div class="k-val">${ausentismo}%</div><div class="k-sub">${counts.ausente} turnos no asistidos de ${totalA}</div></div>
+    <div class="card kpi"><div class="k-top"><span class="k-ico">${icon('check')}</span><span class="k-lbl">Turnos confirmados</span></div><div class="k-val">${confirmados}%</div><div class="k-sub">del total agendado</div></div>
+  </div>
+
+  <div class="dcols">
+    <div class="card" style="min-width:0">
+      <div class="card-head"><h3>Turnos por semana</h3><span class="hint">últimas 4 semanas</span></div>
+      <div class="card-pad">
+        <div class="chart-bars">${weeks.map(w => `<div class="bar-wrap"><div class="bar" style="height:${Math.round(w.v/maxW*100)}%"><span class="bv">${w.v}</span></div><span class="bl">${w.l}</span></div>`).join('')}</div>
+        <p class="mini" style="margin-top:8px">Promedio: ${Math.round(weeks.reduce((s,w)=>s+w.v,0)/weeks.length)} turnos por semana.</p>
+      </div>
+    </div>
+    <div class="card" style="min-width:0">
+      <div class="card-head"><h3>Estado de los turnos</h3><span class="hint">60 días</span></div>
+      <div class="card-pad">
+        <div class="donut-wrap">
+          <svg class="donut" viewBox="0 0 150 150">
+            <circle cx="75" cy="75" r="${R}" stroke="#EDF3F6"></circle>
+            ${segs.map((s,i) => {
+              const len = s.n / totalA * C;
+              const off = segs.slice(0,i).reduce((a,x) => a + x.n/totalA*C, 0);
+              return `<circle cx="75" cy="75" r="${R}" stroke="${s.c}" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}" transform="rotate(-90 75 75)" stroke-linecap="butt"></circle>`;
+            }).join('')}
+            <text x="75" y="72" text-anchor="middle" font-size="19" font-weight="800" fill="#122C3A">${totalA}</text>
+            <text x="75" y="88" text-anchor="middle" font-size="9" fill="#5F7684">turnos</text>
+          </svg>
+          <div class="donut-legend">${segs.map(s => `<div><span class="l"><i class="legend-dot" style="background:${s.c}"></i>${s.l}</span><span class="n">${s.n} · ${Math.round(s.n/totalA*100)}%</span></div>`).join('')}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dcols-3">
+    <div class="card" style="min-width:0">
+      <div class="card-head"><h3>Especialidades más pedidas</h3><span class="hint">este mes</span></div>
+      <div class="card-pad">
+        ${top.map(s => `<div class="hbar">
+          <div class="hbar-top"><span class="n"><i class="dot" style="background:${specColor(s.id)};margin-right:6px"></i>${esc(s.name)}</span><span class="v">${s.count} turnos</span></div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:${Math.round(s.count/maxTop*100)}%;background:${specColor(s.id)}"></div></div>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div class="card" style="min-width:0">
+      <div class="card-head"><h3>Ingresos por mes</h3><span class="hint">pesos</span></div>
+      <div class="card-pad">
+        <div class="months">${ms.map(m => `<div class="m"><span class="mv">${fmtK(m.v)}</span><span class="mb" style="height:${Math.round(m.v/maxM*100)}%"></span><span class="ml">${m.l}</span></div>`).join('')}</div>
+        <p class="mini" style="margin-top:10px">Tendencia estable, con crecimiento en los meses de mayor oferta de estudios.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-head"><h3>Ausentismo y cancelaciones</h3><span class="hint">turnos no asistidos y confirmados vs. cancelados</span></div>
+    <div class="card-pad">
+      <div class="hbar">
+        <div class="hbar-top"><span class="n">Confirmados y atendidos</span><span class="v">${confirmados}% · ${counts.confirmado + counts.atendido} turnos</span></div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:${confirmados}%;background:linear-gradient(90deg,#7FCBA4,#2E9E6B)"></div></div>
+      </div>
+      <div class="hbar">
+        <div class="hbar-top"><span class="n">Cancelados</span><span class="v">${cancelados}% · ${counts.cancelado} turnos</span></div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:${cancelados}%;background:linear-gradient(90deg,#E0AEB4,#C48D93)"></div></div>
+      </div>
+      <div class="hbar">
+        <div class="hbar-top"><span class="n">No asistidos (ausentismo)</span><span class="v">${ausentismo}% · ${counts.ausente} turnos</span></div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:${ausentismo}%;background:linear-gradient(90deg,#C3B8DE,#A294C4)"></div></div>
+      </div>
+      <p class="mini" style="margin-top:10px">El recordatorio por WhatsApp configurado en Ajustes ayuda a bajar el ausentismo: se envía ${SETTINGS.reminderHours} h antes del turno.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-head"><h3>Ocupación por profesional</h3><span class="hint">esta semana</span></div>
+    <div class="card-pad">
+      ${PROS.map(p => {
+        const apts = APPOINTMENTS.filter(a => a.pro === p.id && a.date >= iso(startOfWeek(TODAY)) && a.date <= iso(addDays(startOfWeek(TODAY),6)) && a.status !== 'cancelado');
+        const h = apts.reduce((s,a) => s + a.dur, 0) / 60;
+        const cap = 5 * (DAY_END - DAY_START);
+        const pct = Math.round(h / cap * 100);
+        return `<div class="hbar">
+          <div class="hbar-top"><span class="n"><i class="dot" style="background:${specColor(p.spec)};margin-right:6px"></i>${esc(p.name)} <span class="mini">· ${esc(specName(p.spec))}</span></span><span class="v">${h.toFixed(1)} h · ${pct}%</span></div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:${Math.min(100,pct)}%;background:${specColor(p.spec)}"></div></div>
+        </div>`;
+      }).join('')}
+      <p class="mini">Cardiología y clínica médica concentran la mayor carga; conviene abrir más cupos en los consultorios 1 y 5.</p>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   AJUSTES
+   ============================================================ */
+function viewAjustes(root){
+  root.innerHTML = `
+  <div class="page-head">
+    <div><h1>Ajustes</h1><div class="sub">Catálogo de prácticas, profesionales, horarios y recordatorios. Los cambios se ven en el momento (en memoria).</div></div>
+    <div class="actions"><button class="btn btn-ghost" onclick="toast('Demo: la configuración no se guarda al cerrar.')">${icon('file')} Registro de cambios</button></div>
+  </div>
+  <div class="set-grid">
+    <div class="stack">
+      <div class="card" style="min-width:0">
+        <div class="card-head"><h3>Catálogo de prácticas y servicios</h3><span class="hint">${SERVICES.length} prácticas</span><div class="actions"><button class="btn btn-soft btn-sm" onclick="addService()">${icon('plus','ico-sm')} Agregar</button></div></div>
+        <div class="table-wrap"><table class="t">
+          <thead><tr><th>Práctica</th><th style="width:118px">Valor</th><th style="width:104px">Duración</th></tr></thead>
+          <tbody>${SERVICES.map(s => `<tr>
+            <td><div class="t-name">${esc(s.name)}</div><div class="mini"><span class="dot" style="background:${specColor(s.spec)};margin-right:5px"></span>${esc(specName(s.spec))} · ${esc(proName(s.pro))}</div></td>
+            <td><input class="inline-num" type="number" min="0" step="500" value="${s.price}" onchange="updateService('${s.id}','price',this.value)" aria-label="Valor de ${esc(s.name)}"></td>
+            <td><input class="inline-num" type="number" min="10" step="5" value="${s.dur}" onchange="updateService('${s.id}','dur',this.value)" aria-label="Duración de ${esc(s.name)}"></td>
+          </tr>`).join('')}</tbody>
+        </table></div>
+        <div class="card-pad mini" style="border-top:1px solid var(--line-2)">Edite el valor o la duración y presione fuera del campo: el cambio se aplica al instante en toda la agenda.</div>
+      </div>
+
+      <div class="card" style="min-width:0">
+        <div class="card-head"><h3>Profesionales y especialidades</h3><span class="hint">${PROS.length} profesionales · ${SPECS.length} especialidades</span></div>
+        <div class="table-wrap"><table class="t">
+          <thead><tr><th>Profesional</th><th>Especialidad</th><th>Consultorio</th><th>Matrícula</th></tr></thead>
+          <tbody>${PROS.map(p => `<tr>
+            <td><div class="t-name">${esc(p.name)}</div></td>
+            <td class="mini"><span class="dot" style="background:${specColor(p.spec)};margin-right:5px"></span>${esc(specName(p.spec))}</td>
+            <td class="mini">${esc(p.room)}</td>
+            <td class="mini">${esc(p.mat)}</td>
+          </tr>`).join('')}</tbody>
+        </table></div>
+      </div>
+
+      <div class="card" style="min-width:0">
+        <div class="card-head"><h3>Horarios de atención</h3><span class="hint">se usan para calcular la ocupación</span></div>
+        ${Object.entries(SETTINGS.hours).map(([day, [o,c]]) => `<div class="hours-row">
+          <span class="d">${day}</span>
+          <span class="t">Abre <input type="time" value="${o}" onchange="updateHours('${day}',0,this.value)"></span>
+          <span class="t">Cierra <input type="time" value="${c}" onchange="updateHours('${day}',1,this.value)"></span>
+          ${day === 'Domingo' ? `<span style="margin-left:auto;display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted)"><button class="switch ${SETTINGS.sundayOpen?'on':''}" onclick="toggleSunday()" aria-label="Abrir domingos"></button> Abierto</span>` : ''}
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="stack" style="align-content:start">
+      <div class="card">
+        <div class="card-head"><h3>Recordatorios de turno</h3></div>
+        <div class="set-row">
+          <div class="s-main"><div class="s-t">Enviar recordatorio por WhatsApp</div><div class="s-s">Se envía a los pacientes con turno agendado</div></div>
+          <button class="switch ${SETTINGS.reminderOn?'on':''}" onclick="toggleReminder()" aria-label="Activar recordatorio"></button>
+        </div>
+        <div class="set-row">
+          <div class="s-main"><div class="s-t">¿Cuántas horas antes?</div><div class="s-s">Antelación del mensaje automático</div></div>
+          <select class="select" style="width:130px" onchange="setReminderHours(this.value)" ${SETTINGS.reminderOn?'':'disabled'}>
+            ${[4,12,24,48].map(h => `<option value="${h}" ${SETTINGS.reminderHours===h?'selected':''}>${h} horas</option>`).join('')}
+          </select>
+        </div>
+        <div class="set-row">
+          <div class="s-main"><div class="s-t">Avisar cuando el resultado está listo</div><div class="s-s">Se envía al paciente cuando el estudio se informa</div></div>
+          <button class="switch on" onclick="toast('Demo: el aviso de resultados se configura en el sistema real.')" aria-label="Avisar resultados"></button>
+        </div>
+        <div class="preview-wrap">
+          <div class="preview-lbl">Vista previa del mensaje</div>
+          <div class="preview-msg">${reminderPreview()}</div>
+          <p class="mini" style="margin-top:8px">Se personaliza con el nombre, la práctica, el profesional y la hora de cada turno.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Datos de la clínica</h3></div>
+        <div class="card-pad">
+          <div class="field"><label>Nombre comercial</label><input class="input" value="${esc(SETTINGS.clinic.name)}"></div>
+          <div class="field"><label>WhatsApp de atención</label><input class="input" value="${esc(SETTINGS.clinic.phone)}"></div>
+          <div class="field" style="margin-bottom:0"><label>Dirección</label><input class="input" value="${esc(SETTINGS.clinic.address)}"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Sitio público</h3></div>
+        <div class="card-pad">
+          <p class="mini" style="margin-bottom:10px">Los pacientes piden turno desde la web; los turnos caen en esta agenda.</p>
+          <a class="btn btn-primary btn-block" href="${SETTINGS.publicUrl}" target="_blank" rel="noopener">${icon('external')} Ver la web pública</a>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+function updateService(id, key, val){
+  const s = svc(id);
+  const n = Number(val);
+  if(!s || !n || n < 0){ toast('Valor no válido.'); return; }
+  s[key] = Math.round(n);
+  toast('Práctica actualizada: ' + s.name + ' · ' + (key === 'price' ? fmtARS(s.price) : s.dur + ' min'));
+}
+function addService(){
+  const id = 's' + (SERVICES.length + 1);
+  SERVICES.push({id, name:'Práctica nueva', spec:'clinica', dur:30, price:18000, pro:'p1'});
+  toast('Práctica agregada al final de la lista. Edite el nombre en el sistema real.');
+  go('ajustes');
+}
+function updateHours(day, idx, val){ SETTINGS.hours[day][idx] = val; toast('Horario de ' + day + ' actualizado.'); }
+function toggleReminder(){
+  SETTINGS.reminderOn = !SETTINGS.reminderOn;
+  toast(SETTINGS.reminderOn ? 'Recordatorio automático activado.' : 'Recordatorio automático desactivado.');
+  viewAjustes(document.getElementById('view'));
+}
+function setReminderHours(v){
+  SETTINGS.reminderHours = Number(v);
+  toast('Los recordatorios se enviarán ' + v + ' horas antes.');
+  viewAjustes(document.getElementById('view'));
+}
+function toggleSunday(){
+  SETTINGS.sundayOpen = !SETTINGS.sundayOpen;
+  toast(SETTINGS.sundayOpen ? 'Domingo abierto.' : 'Domingo cerrado.');
+  viewAjustes(document.getElementById('view'));
+}
+function reminderPreview(){
+  if(!SETTINGS.reminderOn) return 'Recordatorio desactivado. Los pacientes no reciben mensaje automático.';
+  const next = APPOINTMENTS.find(a => a.date >= iso(TODAY) && a.status !== 'cancelado') || APPOINTMENTS[0];
+  const c = cli(next.client), s = svc(next.service);
+  return `Hola ${c.name.split(' ')[0]}, le saluda Clínica Güemes. Le recordamos su turno del ${fmtLong(parseISO(next.date)).toLowerCase()} a las ${next.time} para ${s.name.toLowerCase()} con ${proName(next.pro)}. Responda SÍ para confirmar o NO para reprogramar.`;
+}
+
+/* teclado */
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>
